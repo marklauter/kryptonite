@@ -3,5 +3,5 @@ A C# parser combinator based on the ideas expressed in Superpower and Sprache. T
 
 ## refrences
 - Graham Hutton's & Erik Meijer's paper on monadic parser combinators: https://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf
-- Nicholas Blumhardt's Superpower - https://github.com/datalust/superpower
-- Nicholas Blumhardt NDC Conference Superpower demo - https://www.youtube.com/watch?v=klHyc9HQnNQ
+- Nicholas Blumhardt's Superpower: https://github.com/datalust/superpower
+- Nicholas Blumhardt NDC Conference Superpower demo: https://www.youtube.com/watch?v=klHyc9HQnNQ
