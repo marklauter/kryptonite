@@ -52,6 +52,21 @@ public class CombinatorTests
         var match = patternMatcher(segment);
         Assert.Equal(expectedMatch, match.Success);
     }
+
+    [Theory]
+    [InlineData("11", '1', '2', false)]
+    [InlineData("22", '1', '2', false)]
+    [InlineData("11", '1', '1', true)]
+    public void Then(string value, char lch, char rch, bool expectedMatch)
+    {
+        var segment = new Segment(value);
+        var patternMatcher = Character
+            .IsEqual(lch)
+            .Then(Character.IsEqual(rch));
+
+        var match = patternMatcher(segment);
+        Assert.Equal(expectedMatch, match.Success);
+    }
 }
 
 public readonly ref struct Symbol(
@@ -73,6 +88,14 @@ public readonly ref struct MatchResult(
     public readonly Segment Segment = segment;
     public readonly Symbol Symbol = symbol;
     public readonly bool Success = success;
+
+    public static MatchResult Empty(Segment segment)
+    {
+        return new(
+            segment,
+            new(segment.Offset, 0, MatchResult.NoMatch),
+            false);
+    }
 };
 
 public readonly ref struct Popped(
@@ -82,7 +105,6 @@ public readonly ref struct Popped(
     public readonly Segment Source = source;
     public readonly char Value = value;
 }
-
 
 public readonly ref struct Segment(
     ReadOnlySpan<char> value,
@@ -99,7 +121,7 @@ public readonly ref struct Segment(
     public int Length => Value.Length;
     public bool IsEnd => Offset >= Value.Length;
 
-    public ReadOnlySpan<char> ReadSymbol(Symbol symbol)
+    public ReadOnlySpan<char> ReadSymbol(ref readonly Symbol symbol)
     {
         return symbol.Offset >= Value.Length
             ? "EOF"
@@ -128,64 +150,54 @@ public readonly ref struct Segment(
 
 public static class Character
 {
-    public static PatternMatcher IsDigit => source =>
+    public static Recognizer IsDigit => segment =>
     {
-        var popped = source.Pop();
+        var popped = segment.Pop();
         return Char.IsDigit(popped.Value)
             ? new MatchResult(
                 popped.Source,
-                new(source.Offset, 1, 1),
+                new(segment.Offset, 1, 1),
                 true)
-            : new MatchResult(
-                source,
-                new(source.Offset, 0, MatchResult.NoMatch),
-                false);
+            : MatchResult.Empty(segment);
     };
 
-    public static PatternMatcher IsLetter => source =>
+    public static Recognizer IsLetter => segment =>
     {
-        var popped = source.Pop();
+        var popped = segment.Pop();
         return Char.IsLetter(popped.Value)
             ? new MatchResult(
                 popped.Source,
-                new(source.Offset, 1, 1),
+                new(segment.Offset, 1, 1),
                 true)
-            : new MatchResult(
-                source,
-                new(source.Offset, 0, MatchResult.NoMatch),
-                false);
+            : MatchResult.Empty(segment);
     };
 
-    public static PatternMatcher IsEqual(char c)
+    public static Recognizer IsEqual(char c)
     {
         return IsEqual(c, false);
     }
 
-    public static PatternMatcher IsEqual(char c, bool ignoreCase)
+    public static Recognizer IsEqual(char c, bool ignoreCase)
     {
-        return source =>
+        return segment =>
         {
-            var popped = source.Pop();
+            var popped = segment.Pop();
             return popped.Value == c ||
-                (ignoreCase &&
-                Char.ToUpperInvariant(popped.Value) == Char.ToUpperInvariant(c))
+                (ignoreCase && Char.ToUpperInvariant(popped.Value) == Char.ToUpperInvariant(c))
                 ? new MatchResult(
                     popped.Source,
-                    new(source.Offset, 1, 1),
+                    new(segment.Offset, 1, 1),
                     true)
-                : new MatchResult(
-                    source,
-                    new(source.Offset, 0, MatchResult.NoMatch),
-                    false);
+                : MatchResult.Empty(segment);
         };
     }
 }
 
-public delegate MatchResult PatternMatcher(Segment source);
+public delegate MatchResult Recognizer(Segment segment);
 
 public static class Combinators
 {
-    public static PatternMatcher Or(this PatternMatcher left, PatternMatcher right)
+    public static Recognizer Or(this Recognizer left, Recognizer right)
     {
         return segment =>
         {
@@ -195,6 +207,14 @@ public static class Combinators
                 : right(segment);
         };
     }
+    public static Recognizer Then(this Recognizer first, Recognizer second)
+    {
+        return segment =>
+        {
+            var match = first(segment);
+            return match.Success
+                ? second(match.Segment)
+                : match;
+        };
+    }
 }
-
-
