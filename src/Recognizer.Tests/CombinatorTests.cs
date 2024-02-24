@@ -74,6 +74,7 @@ public readonly ref struct Symbol(
     int length,
     int token)
 {
+    public const int NoMatch = -1;
     public readonly int Offset = offset;
     public readonly int Length = length;
     public readonly int Token = token;
@@ -84,16 +85,15 @@ public readonly ref struct MatchResult(
     Symbol symbol,
     bool success)
 {
-    public const int NoMatch = -1;
     public readonly Segment Segment = segment;
     public readonly Symbol Symbol = symbol;
     public readonly bool Success = success;
 
-    public static MatchResult Empty(Segment segment)
+    public static MatchResult NoMatch(Segment segment)
     {
         return new(
             segment,
-            new(segment.Offset, 0, MatchResult.NoMatch),
+            new(segment.Offset, 0, Symbol.NoMatch),
             false);
     }
 };
@@ -154,22 +154,22 @@ public static class Character
     {
         var popped = segment.Pop();
         return Char.IsDigit(popped.Value)
-            ? new MatchResult(
+            ? new(
                 popped.Source,
                 new(segment.Offset, 1, 1),
                 true)
-            : MatchResult.Empty(segment);
+            : MatchResult.NoMatch(segment);
     };
 
     public static Recognizer IsLetter => segment =>
     {
         var popped = segment.Pop();
         return Char.IsLetter(popped.Value)
-            ? new MatchResult(
+            ? new(
                 popped.Source,
                 new(segment.Offset, 1, 1),
                 true)
-            : MatchResult.Empty(segment);
+            : MatchResult.NoMatch(segment);
     };
 
     public static Recognizer IsEqual(char c)
@@ -183,12 +183,12 @@ public static class Character
         {
             var popped = segment.Pop();
             return popped.Value == c ||
-                (ignoreCase && Char.ToUpperInvariant(popped.Value) == Char.ToUpperInvariant(c))
-                ? new MatchResult(
+                ignoreCase && Char.ToUpperInvariant(popped.Value) == Char.ToUpperInvariant(c)
+                ? new(
                     popped.Source,
                     new(segment.Offset, 1, 1),
                     true)
-                : MatchResult.Empty(segment);
+                : MatchResult.NoMatch(segment);
         };
     }
 }
