@@ -1,8 +1,10 @@
-﻿using Luthor.Lexers;
+﻿using Luthor.Combinators;
+using Luthor.Lexers;
 
 namespace Luthor.Classifiers;
 
-public static class NumericClasses
+// todo: bench MatchInteger vs MatchIntegerFast to guarantee that MatchInteger2 is faster and has fewer allocations
+public static class Numerics
 {
     public static Lexer MatchInteger => segment =>
     {
@@ -12,13 +14,13 @@ public static class NumericClasses
             segment = segment.Advance();
         }
 
-        var lexeme = CharacterClasses.IsDigit(segment);
+        var lexeme = Characters.IsDigit(segment);
         if (lexeme.Success)
         {
             while (lexeme.Success)
             {
                 segment = segment.Advance();
-                lexeme = CharacterClasses.IsDigit(segment);
+                lexeme = Characters.IsDigit(segment);
             }
 
             return Lexeme.Hit(start, segment);
@@ -27,8 +29,7 @@ public static class NumericClasses
         return Lexeme.Miss(start);
     };
 
-    // todo: bench MatchInteger vs MatchInteger2 to guarantee that MatchInteger2 is faster and has fewer allocations
-    public static Lexer MatchInteger2 => segment =>
+    public static Lexer MatchIntegerFast => segment =>
     {
         var start = segment;
         var length = segment.Length - segment.Offset;
@@ -53,6 +54,11 @@ public static class NumericClasses
         return Lexeme.Miss(start);
     };
 
+    public static Lexer MatchInteger3 =
+        Characters.Is('+').Or(Characters.Is('-'))
+        .ZeroOrOne()
+        .And(Characters.IsDigit.OneOrMore());
+
     public static Lexer MatchFloatingPoint => segment =>
     {
         var start = segment;
@@ -63,13 +69,13 @@ public static class NumericClasses
             if (segment.Look() == '.')
             {
                 segment = segment.Advance();
-                lexeme = CharacterClasses.IsDigit(segment);
+                lexeme = Characters.IsDigit(segment);
                 if (lexeme.Success)
                 {
                     while (lexeme.Success)
                     {
                         segment = segment.Advance();
-                        lexeme = CharacterClasses.IsDigit(segment);
+                        lexeme = Characters.IsDigit(segment);
                     }
 
                     return Lexeme.Hit(start, segment);
@@ -110,13 +116,13 @@ public static class NumericClasses
             if (segment.Look() is 'x' or 'X')
             {
                 segment = segment.Advance();
-                var lexeme = CharacterClasses.IsHexDigit(segment);
+                var lexeme = Characters.IsHexDigit(segment);
                 if (lexeme.Success)
                 {
                     while (lexeme.Success)
                     {
                         segment = segment.Advance();
-                        lexeme = CharacterClasses.IsHexDigit(segment);
+                        lexeme = Characters.IsHexDigit(segment);
                     }
                     // todo: seems like tests like this need to terminated on a word boundary, like \G\d\b, otherwise you could lex 0xFFZZZ as 0xFF and miss the syntax error
                     return Lexeme.Hit(start, segment);
