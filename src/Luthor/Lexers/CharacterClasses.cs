@@ -4,62 +4,62 @@ public static class CharacterClasses
 {
     // [0-9]
     // \d
-    public static Lexer AnyDigit => segment => Char.IsDigit(segment.Peek())
+    public static Lexer IsDigit => segment => Char.IsDigit(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [0-9a-fA-F]
-    public static Lexer AnyHexDigit => segment => Char.IsAsciiHexDigit(segment.Peek())
+    public static Lexer IsHexDigit => segment => Char.IsAsciiHexDigit(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // \D
-    public static Lexer AnyNonDigit => segment => !Char.IsDigit(segment.Peek())
+    public static Lexer IsNonDigit => segment => !Char.IsDigit(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [a-zA-Z]
-    public static Lexer AnyLetter => segment => Char.IsLetter(segment.Peek())
+    public static Lexer IsLetter => segment => Char.IsLetter(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [^a-zA-Z]
-    public static Lexer AnyNonLetter => segment => !Char.IsLetter(segment.Peek())
+    public static Lexer IsNonLetter => segment => !Char.IsLetter(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [ |\t|\n|\r|\v|\f]
     // \s
-    public static Lexer AnyWhitespace => segment => Char.IsWhiteSpace(segment.Peek())
+    public static Lexer IsWhitespace => segment => Char.IsWhiteSpace(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [^ |\t|\n|\r|\v|\f]
     // \S
-    public static Lexer AnyNonWhitespace => segment => !Char.IsWhiteSpace(segment.Peek())
+    public static Lexer IsNonWhitespace => segment => !Char.IsWhiteSpace(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // .
-    public static Lexer AnyNonNewLine => segment => segment.Peek() != '\n'
+    public static Lexer IsNonNewLine => segment => segment.Peek() != '\n'
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [a-z]
-    public static Lexer AnyLowerCase => segment => Char.IsLower(segment.Peek())
+    public static Lexer IsLowerCase => segment => Char.IsLower(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [A-Z]
-    public static Lexer AnyUpperCase => segment => Char.IsUpper(segment.Peek())
+    public static Lexer IsUpperCase => segment => Char.IsUpper(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // [\s\S]
-    public static Lexer AnyCharacter => segment => Lexeme.Hit(segment, segment.Advance());
+    public static Lexer IsCharacter => segment => Lexeme.Hit(segment, segment.Advance());
 
     // \w
-    public static Lexer AnyWordCharacter => segment =>
+    public static Lexer IsWordCharacter => segment =>
     {
         var value = segment.Peek();
         return Char.IsLetterOrDigit(value) || value == '_'
@@ -68,7 +68,7 @@ public static class CharacterClasses
     };
 
     // \W
-    public static Lexer AnyNonWordCharacter => segment =>
+    public static Lexer IsNonWordCharacter => segment =>
     {
         var value = segment.Peek();
         return !(Char.IsLetterOrDigit(value) || value == '_')
@@ -77,13 +77,13 @@ public static class CharacterClasses
     };
 
     // [\x0020|\x00a0]
-    public static Lexer AnySeparator => segment => Char.IsSeparator(segment.Peek())
+    public static Lexer IsSeparator => segment => Char.IsSeparator(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
     // \p{P}
     // or something like [.,;:!?()\{\}\[\]-]
-    public static Lexer AnyPunctuation => segment => Char.IsPunctuation(segment.Peek())
+    public static Lexer IsPunctuation => segment => Char.IsPunctuation(segment.Peek())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment, segment.Advance());
 
