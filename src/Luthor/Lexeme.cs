@@ -1,4 +1,6 @@
-﻿namespace Luthor;
+﻿using System.Runtime.CompilerServices;
+
+namespace Luthor;
 
 public class Lexeme
 {
@@ -18,11 +20,19 @@ public class Lexeme
     public int Length { get; }
     public bool Success { get; }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Lexeme Miss(Segment match, Segment remainder)
     {
         return new Lexeme(match, remainder, 0);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Lexeme Hit(Segment match, Segment remainder)
+    {
+        return new Lexeme(match, remainder, 1);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Lexeme Hit(Segment match, Segment remainder, int length)
     {
         return length > 0
@@ -31,39 +41,13 @@ public class Lexeme
     }
 };
 
-public sealed class Lexeme<TToken>
-    : Lexeme
+public sealed class Lexeme<TToken>(Lexeme lexeme, TToken token)
+    : Lexeme(
+        lexeme?.Match ?? throw new ArgumentNullException(nameof(lexeme)),
+        lexeme?.Remainder ?? throw new ArgumentNullException(nameof(lexeme)),
+        lexeme?.Length ?? throw new ArgumentNullException(nameof(lexeme)))
     where TToken : Enum
 {
-    private Lexeme(
-        Segment match,
-        Segment remainder,
-        int length,
-        TToken token)
-        : base(match, remainder, length)
-    {
-        this.Token = token;
-    }
-
-    public TToken Token { get; }
+    public TToken Token { get; } = token;
     public string Value => Match.Value[Match.Offset..Length];
-
-    public static Lexeme<TToken> Miss(
-        Segment match,
-        Segment remainder,
-        TToken token)
-    {
-        return new Lexeme<TToken>(match, remainder, 0, token);
-    }
-
-    public static Lexeme<TToken> Hit(
-        Segment match,
-        Segment remainder,
-        TToken token,
-        int length)
-    {
-        return length > 0
-            ? new Lexeme<TToken>(match, remainder, length, token)
-            : throw new ArgumentOutOfRangeException(nameof(length));
-    }
 }

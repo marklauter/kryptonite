@@ -6,6 +6,7 @@ public sealed record Segment(
     string Value,
     int Offset)
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Segment(string Segment)
         : this(Segment, 0)
     {
@@ -38,5 +39,23 @@ public sealed record Segment(
         return EndOfSource
             ? Char.MinValue
             : Value[Offset];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator Segment(string value)
+    {
+        return new(value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator string(Segment segment)
+    {
+        return segment.Value[segment.Offset..];
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<char> AsSpan()
+    {
+        return Value.AsSpan(Offset);
     }
 }

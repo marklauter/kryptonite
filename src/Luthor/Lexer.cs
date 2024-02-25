@@ -1,4 +1,6 @@
-﻿namespace Luthor;
+﻿using System.Runtime.CompilerServices;
+
+namespace Luthor;
 
 public delegate Lexeme Lexer(Segment segment);
 
@@ -12,48 +14,25 @@ public sealed class Lexer<TToken>(
     private readonly TToken token = token;
     private readonly bool ignored = ignored;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Lexer(Lexer lexer, TToken token)
         : this(lexer, token, false)
     { }
 
     public sealed record MatchResult(
+        Lexeme Lexeme,
         TToken Token,
-        bool Ignored,
-        bool Success,
-        int Offset,
-        int Length)
+        bool Ignored)
     {
-        internal static MatchResult Hit(
-            TToken token,
-            bool ignored,
-            int offset,
-            int length)
-        {
-            return new MatchResult(
-                token,
-                ignored,
-                true,
-                offset,
-                length);
-        }
-
-        internal static MatchResult Miss(
-            TToken token)
-        {
-            return new MatchResult(
-                token,
-                false,
-                false,
-                0,
-                0);
-        }
+        public bool Success => Lexeme.Success;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public MatchResult Match(Segment segment)
     {
-        var result = lexer.Invoke(segment);
-        return result.Success
-            ? MatchResult.Hit(token, ignored, result.Offset, result.Length)
-            : MatchResult.Miss(token);
+        return new MatchResult(
+            lexer.Invoke(segment),
+            token,
+            ignored);
     }
 }
