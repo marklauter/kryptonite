@@ -19,9 +19,36 @@ public static class NumericClasses
                 lexeme = CharacterClasses.IsDigit(segment);
             }
 
-            return Lexeme.Hit(start, segment, start.Length - segment.Length);
+            return Lexeme.Hit(start, segment);
         }
 
-        return Lexeme.Miss(start, segment);
+        return Lexeme.Miss(start);
+    };
+
+    public static Lexer MatchFloatingPoint => segment =>
+    {
+        var start = segment;
+        var lexeme = MatchInteger(segment);
+        if (lexeme.Success)
+        {
+            segment = lexeme.Remainder;
+            if (segment.Peek() == '.')
+            {
+                segment = segment.Advance();
+                lexeme = CharacterClasses.IsDigit(segment);
+                if (lexeme.Success)
+                {
+                    while (lexeme.Success)
+                    {
+                        segment = segment.Advance();
+                        lexeme = CharacterClasses.IsDigit(segment);
+                    }
+
+                    return Lexeme.Hit(start, segment);
+                }
+            }
+        }
+
+        return Lexeme.Miss(start);
     };
 }
