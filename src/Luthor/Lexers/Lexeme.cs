@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Luthor;
+namespace Luthor.Lexers;
 
 public class Lexeme
 {
