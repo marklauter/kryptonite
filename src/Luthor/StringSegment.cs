@@ -26,65 +26,38 @@ public sealed record StringSegment(
     } = new(String.Empty, 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StringSegment Advance()
-    {
-        return Advance(1);
-    }
+    public StringSegment Advance() => Advance(1);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StringSegment Advance(int length)
-    {
-        return new StringSegment(Value, Offset + length);
-    }
+    public StringSegment Advance(int length) => new(Value, Offset + length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char Look()
-    {
-        return EndOfSegment
+    public char Look() => EndOfSegment
+        ? Char.MinValue
+        : Value[Offset];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public char LookAhead(int offset) => Offset + offset >= Value.Length || offset < 0
+        ? throw new ArgumentOutOfRangeException(nameof(offset))
+        : EndOfSegment
             ? Char.MinValue
-            : Value[Offset];
-    }
+            : Value[Offset + offset];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char LookAhead(int offset)
-    {
-        return Offset + offset >= Value.Length || offset < 0
-            ? throw new ArgumentOutOfRangeException(nameof(offset))
-            : EndOfSegment
-                ? Char.MinValue
-                : Value[Offset + offset];
-    }
+    public char LookBack(int offset) => Offset - offset < 0 || offset < 0
+        ? throw new ArgumentOutOfRangeException(nameof(offset))
+        : EndOfSegment
+            ? Char.MinValue
+            : Value[Offset - offset];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char LookBack(int offset)
-    {
-        return Offset - offset < 0 || offset < 0
-            ? throw new ArgumentOutOfRangeException(nameof(offset))
-            : EndOfSegment
-                ? Char.MinValue
-                : Value[Offset - offset];
-    }
+    public static implicit operator StringSegment(string value) => new(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator StringSegment(string value)
-    {
-        return new(value);
-    }
+    public static implicit operator string(StringSegment segment) => segment.ToString();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator string(StringSegment segment)
-    {
-        return segment.ToString();
-    }
+    public ReadOnlySpan<char> AsSpan() => Value.AsSpan(Offset);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<char> AsSpan()
-    {
-        return Value.AsSpan(Offset);
-    }
-
-    public override string ToString()
-    {
-        return Value[Offset..];
-    }
+    public override string ToString() => Value[Offset..];
 }
