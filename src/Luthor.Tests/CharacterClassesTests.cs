@@ -3,7 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Luthor.Tests;
 
-public class CharacterClassesTests
+[ExcludeFromCodeCoverage]
+public sealed class CharacterClassesTests
 {
     [Theory]
     [InlineData("1", true)]
@@ -316,7 +317,6 @@ public class CharacterClassesTests
         Assert.Contains("begin", ex.Message);
     }
 
-    [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "just tests")]
     [Theory]
     [InlineData("a", new[] { 'a', 'b' }, true)]
     [InlineData("b", new[] { 'a', 'b' }, true)]
@@ -330,7 +330,6 @@ public class CharacterClassesTests
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 
-    [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "just tests")]
     [Theory]
     [InlineData("a", new[] { 'a', 'b' }, true)]
     [InlineData("b", new[] { 'a', 'b' }, true)]
@@ -348,7 +347,6 @@ public class CharacterClassesTests
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 
-    [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "just tests")]
     [Theory]
     [InlineData("a", new[] { 'a', 'b' }, false)]
     [InlineData("b", new[] { 'a', 'b' }, false)]
@@ -362,7 +360,6 @@ public class CharacterClassesTests
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 
-    [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "just tests")]
     [Theory]
     [InlineData("a", new[] { 'a', 'b' }, false)]
     [InlineData("b", new[] { 'a', 'b' }, false)]
