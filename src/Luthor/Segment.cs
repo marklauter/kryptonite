@@ -50,12 +50,17 @@ public sealed record Segment(
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator string(Segment segment)
     {
-        return segment.Value[segment.Offset..segment.Length];
+        return segment.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan()
     {
-        return Value.AsSpan(Offset..Length);
+        return Value.AsSpan(Offset..(Offset + Length));
+    }
+
+    public override string ToString()
+    {
+        return Value[Offset..(Offset + Length)];
     }
 }
