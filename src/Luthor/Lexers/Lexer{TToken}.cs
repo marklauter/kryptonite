@@ -26,7 +26,7 @@ public sealed class Lexer<TToken>(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public MatchResult Match(Segment segment)
+    public MatchResult Match(StringSegment segment)
     {
         return new MatchResult(
             lexer.Invoke(segment),

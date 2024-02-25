@@ -1,57 +1,62 @@
-﻿namespace Luthor.Lexers;
+﻿using Luthor.Lexers;
 
+namespace Luthor.Classifiers;
+
+/// <summary>
+/// matches the first character of a string segment
+/// </summary>
 public static class CharacterClasses
 {
     // [0-9]
     // \d
-    public static Lexer IsDigit => segment => Char.IsDigit(segment.Peek())
+    public static Lexer IsDigit => segment => Char.IsDigit(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [0-9a-fA-F]
-    public static Lexer IsHexDigit => segment => Char.IsAsciiHexDigit(segment.Peek())
+    public static Lexer IsHexDigit => segment => Char.IsAsciiHexDigit(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // \D
-    public static Lexer IsNonDigit => segment => !Char.IsDigit(segment.Peek())
+    public static Lexer IsNonDigit => segment => !Char.IsDigit(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [a-zA-Z]
-    public static Lexer IsLetter => segment => Char.IsLetter(segment.Peek())
+    public static Lexer IsLetter => segment => Char.IsLetter(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [^a-zA-Z]
-    public static Lexer IsNonLetter => segment => !Char.IsLetter(segment.Peek())
+    public static Lexer IsNonLetter => segment => !Char.IsLetter(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [ |\t|\n|\r|\v|\f]
     // \s
-    public static Lexer IsWhitespace => segment => Char.IsWhiteSpace(segment.Peek())
+    public static Lexer IsWhitespace => segment => Char.IsWhiteSpace(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [^ |\t|\n|\r|\v|\f]
     // \S
-    public static Lexer IsNonWhitespace => segment => !Char.IsWhiteSpace(segment.Peek())
+    public static Lexer IsNonWhitespace => segment => !Char.IsWhiteSpace(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // .
-    public static Lexer IsNonNewLine => segment => segment.Peek() != '\n'
+    public static Lexer IsNonNewLine => segment => segment.Look() != '\n'
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [a-z]
-    public static Lexer IsLowerCase => segment => Char.IsLower(segment.Peek())
+    public static Lexer IsLowerCase => segment => Char.IsLower(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // [A-Z]
-    public static Lexer IsUpperCase => segment => Char.IsUpper(segment.Peek())
+    public static Lexer IsUpperCase => segment => Char.IsUpper(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
@@ -61,7 +66,7 @@ public static class CharacterClasses
     // \w
     public static Lexer IsWordCharacter => segment =>
     {
-        var value = segment.Peek();
+        var value = segment.Look();
         return Char.IsLetterOrDigit(value) || value == '_'
             ? Lexeme.Hit(segment, segment.Advance())
             : Lexeme.Miss(segment);
@@ -70,29 +75,27 @@ public static class CharacterClasses
     // \W
     public static Lexer IsNonWordCharacter => segment =>
     {
-        var value = segment.Peek();
+        var value = segment.Look();
         return !(Char.IsLetterOrDigit(value) || value == '_')
             ? Lexeme.Hit(segment, segment.Advance())
             : Lexeme.Miss(segment);
     };
 
     // [\x0020|\x00a0]
-    public static Lexer IsSeparator => segment => Char.IsSeparator(segment.Peek())
+    public static Lexer IsSeparator => segment => Char.IsSeparator(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
     // \p{P}
     // or something like [.,;:!?()\{\}\[\]-]
-    public static Lexer IsPunctuation => segment => Char.IsPunctuation(segment.Peek())
+    public static Lexer IsPunctuation => segment => Char.IsPunctuation(segment.Look())
         ? Lexeme.Hit(segment, segment.Advance())
         : Lexeme.Miss(segment);
 
-    // \a 
-    // \u0007
+    // [\a|\u0007]
     public static Lexer IsBell => Is('\a');
 
-    // \b
-    // \u0008
+    // [\b|\u0008]
     public static Lexer IsBackspace => Is('\b');
 
     // \n
@@ -102,10 +105,24 @@ public static class CharacterClasses
     // \u0009
     public static Lexer IsTab => Is('\t');
 
+    // for example an identifier would look something like this [\w]+\b where \b is word boundary
+    public static Lexer IsWordBoundary => segment =>
+    {
+        var current = segment.Look();
+        var next = segment.LookAhead(1);
+
+        var isCurrentWordChar = Char.IsLetterOrDigit(current) || current == '_';
+        var isNextWordChar = Char.IsLetterOrDigit(next) || next == '_';
+
+        return isCurrentWordChar != isNextWordChar
+            ? Lexeme.Hit(segment, segment.Advance())
+            : Lexeme.Miss(segment);
+    };
+
     // c
     public static Lexer Is(char c)
     {
-        return segment => segment.Peek() == c
+        return segment => segment.Look() == c
             ? Lexeme.Hit(segment, segment.Advance())
             : Lexeme.Miss(segment);
     }
@@ -115,7 +132,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = segment.Peek();
+            var value = segment.Look();
             return value == c || Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c)
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
@@ -125,7 +142,7 @@ public static class CharacterClasses
     // ^c
     public static Lexer IsNot(char c)
     {
-        return segment => segment.Peek() != c
+        return segment => segment.Look() != c
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
     }
@@ -135,7 +152,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = segment.Peek();
+            var value = segment.Look();
             return !(value == c || Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c))
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
@@ -148,7 +165,7 @@ public static class CharacterClasses
         return begin < end
             ? (segment =>
             {
-                var value = segment.Peek();
+                var value = segment.Look();
                 return Char.IsBetween(value, begin, end)
                     ? Lexeme.Hit(segment, segment.Advance())
                     : Lexeme.Miss(segment);
@@ -161,7 +178,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = segment.Peek();
+            var value = segment.Look();
             return Array.IndexOf(set, value) > -1
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
@@ -173,7 +190,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = Char.ToUpperInvariant(segment.Peek());
+            var value = Char.ToUpperInvariant(segment.Look());
             return Array.FindIndex(set, c => Char.ToUpperInvariant(c) == value) > -1
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
@@ -185,7 +202,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = segment.Peek();
+            var value = segment.Look();
             return Array.IndexOf(set, value) == -1
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);
@@ -197,7 +214,7 @@ public static class CharacterClasses
     {
         return segment =>
         {
-            var value = Char.ToUpperInvariant(segment.Peek());
+            var value = Char.ToUpperInvariant(segment.Look());
             return Array.FindIndex(set, c => Char.ToUpperInvariant(c) == value) == -1
                 ? Lexeme.Hit(segment, segment.Advance())
                 : Lexeme.Miss(segment);

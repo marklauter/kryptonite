@@ -1,6 +1,4 @@
-﻿using Luthor.Lexers;
-
-namespace Luthor;
+﻿namespace Luthor.Lexers;
 
 public readonly ref struct Tokenizer<TToken>(
     ReadOnlySpan<Lexer<TToken>> lexers)

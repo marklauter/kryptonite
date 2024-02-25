@@ -1,6 +1,4 @@
-﻿using Luthor.Lexers;
-
-namespace Luthor;
+﻿namespace Luthor.Lexers;
 
 public sealed class Vocabulary<TToken>
     where TToken : Enum

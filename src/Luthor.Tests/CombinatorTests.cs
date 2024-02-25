@@ -1,4 +1,4 @@
-﻿using Luthor.Lexers;
+﻿using Luthor.Classifiers;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Luthor.Tests;

@@ -5,8 +5,8 @@ namespace Luthor.Lexers;
 public class Lexeme
 {
     protected Lexeme(
-        Segment match,
-        Segment remainder,
+        StringSegment match,
+        StringSegment remainder,
         int length)
     {
         Match = match ?? throw new ArgumentNullException(nameof(match));
@@ -15,25 +15,25 @@ public class Lexeme
         Success = Length > 0;
     }
 
-    public Segment Match { get; }
-    public Segment Remainder { get; }
+    public StringSegment Match { get; }
+    public StringSegment Remainder { get; }
     public int Length { get; }
     public bool Success { get; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Miss(Segment segment)
+    public static Lexeme Miss(StringSegment segment)
     {
         return new Lexeme(segment, segment, 0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Hit(Segment match, Segment remainder)
+    public static Lexeme Hit(StringSegment match, StringSegment remainder)
     {
         return new Lexeme(match, remainder, match.Length - remainder.Length);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Hit(Segment match, Segment remainder, int length)
+    public static Lexeme Hit(StringSegment match, StringSegment remainder, int length)
     {
         return length > 0
             ? new Lexeme(match, remainder, length)

@@ -1,6 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using Luthor.Lexers;
+using System.Text.RegularExpressions;
 
-namespace Luthor.Lexers;
+namespace Luthor.Classifiers;
 
 public static class RegexClasses
 {
