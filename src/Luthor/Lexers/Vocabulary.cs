@@ -5,11 +5,7 @@ public sealed class Vocabulary<TToken>
 {
     private readonly List<Lexer<TToken>> lexers = [];
 
-    public Tokenizer<TToken> Build()
-    {
-        return new Tokenizer<TToken>(lexers.ToArray());
-    }
-
+    public Tokenizer<TToken> Build() => new(lexers.ToArray());
 
     //public Vocabulary Match(
     //    string pattern,
@@ -21,7 +17,6 @@ public sealed class Vocabulary<TToken>
 
     //    return this;
     //}
-
 
     //public Vocabulary Match(
     //    string pattern,
