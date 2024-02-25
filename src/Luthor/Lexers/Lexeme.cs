@@ -21,9 +21,9 @@ public class Lexeme
     public bool Success { get; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Miss(Segment match, Segment remainder)
+    public static Lexeme Miss(Segment segment)
     {
-        return new Lexeme(match, remainder, 0);
+        return new Lexeme(segment, segment, 0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
