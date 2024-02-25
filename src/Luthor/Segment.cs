@@ -12,7 +12,7 @@ public sealed record Segment(
     {
     }
 
-    public int Length => Value.Length;
+    public int Length => Value.Length - Offset;
     public bool EndOfSource => Offset >= Value.Length;
 
     public static Segment Empty
@@ -50,12 +50,12 @@ public sealed record Segment(
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator string(Segment segment)
     {
-        return segment.Value[segment.Offset..];
+        return segment.Value[segment.Offset..segment.Length];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan()
     {
-        return Value.AsSpan(Offset);
+        return Value.AsSpan(Offset..Length);
     }
 }
