@@ -1,4 +1,6 @@
-﻿namespace Luthor;
+﻿using Luthor.Lexers;
+
+namespace Luthor;
 
 public static class Combinators
 {
