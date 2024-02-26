@@ -3,7 +3,7 @@
 namespace Luthor.Tests;
 
 [ExcludeFromCodeCoverage]
-public sealed class SegmentTests
+public sealed class StringSegmentTests
 {
     [Fact]
     public void Ctor()

@@ -1,10 +1,10 @@
 ﻿using Luthor.Classifiers;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Luthor.Tests;
+namespace Luthor.Tests.Lexers;
 
 [ExcludeFromCodeCoverage]
-public sealed class NumericClassesTests
+public sealed class NumericsTests
 {
     [Theory]
     [InlineData("1", true)]
@@ -36,7 +36,7 @@ public sealed class NumericClassesTests
     [InlineData(" ", false)]
     public void MatchInteger(string source, bool expectedSuccess)
     {
-        var lexeme = NumericClasses.MatchInteger(source);
+        var lexeme = Numerics.MatchInteger(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (expectedSuccess)
         {
@@ -70,9 +70,52 @@ public sealed class NumericClassesTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchInteger2(string source, bool expectedSuccess)
+    public void MatchIntegerFast(string source, bool expectedSuccess)
     {
-        var lexeme = NumericClasses.MatchInteger2(source);
+        var lexeme = Numerics.MatchIntegerFast(source);
+        Assert.Equal(expectedSuccess, lexeme.Success);
+        if (expectedSuccess)
+        {
+            if (source.Contains('.'))
+            {
+                source = source.Split('.')[0];
+            }
+
+            Assert.Equal(source, lexeme);
+        }
+    }
+
+    [Theory]
+    [InlineData("1", true)]
+    [InlineData("12", true)]
+    [InlineData("123456", true)]
+    [InlineData("+1", true)]
+    [InlineData("-1", true)]
+    [InlineData("+123", true)]
+    [InlineData("-123", true)]
+
+    [InlineData("1.0", true)]
+    [InlineData("12.0", true)]
+    [InlineData("123456.0", true)]
+    [InlineData("+1.0", true)]
+    [InlineData("-1.0", true)]
+    [InlineData("+123.0", true)]
+    [InlineData("-123.0", true)]
+
+    [InlineData("1.0E1", true)]
+    [InlineData("1.0e1", true)]
+    [InlineData("+1.0E1", true)]
+    [InlineData("-1.0e1", true)]
+    [InlineData("1.0E+1", true)]
+    [InlineData("1.0e-1", true)]
+
+    [InlineData("-", false)]
+    [InlineData("+", false)]
+    [InlineData("a", false)]
+    [InlineData(" ", false)]
+    public void MatchInteger3(string source, bool expectedSuccess)
+    {
+        var lexeme = Numerics.MatchInteger3(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (expectedSuccess)
         {
@@ -115,7 +158,7 @@ public sealed class NumericClassesTests
     [InlineData(" ", false)]
     public void MatchFloatingPoint(string source, bool expectedSuccess)
     {
-        var lexeme = NumericClasses.MatchFloatingPoint(source);
+        var lexeme = Numerics.MatchFloatingPoint(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
@@ -161,7 +204,7 @@ public sealed class NumericClassesTests
     [InlineData(" ", false)]
     public void MatchScientificNotation(string source, bool expectedSuccess)
     {
-        var lexeme = NumericClasses.MatchScientificNotation(source);
+        var lexeme = Numerics.MatchScientificNotation(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
@@ -209,7 +252,7 @@ public sealed class NumericClassesTests
     [InlineData("0xfFfffFFaaff", true)]
     public void MatchHexNotation(string source, bool expectedSuccess)
     {
-        var lexeme = NumericClasses.MatchHexNotation(source);
+        var lexeme = Numerics.MatchHexNotation(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
