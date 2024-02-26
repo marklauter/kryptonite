@@ -242,7 +242,7 @@ public sealed class CharactersTests
     [InlineData("b", 'a', false)]
     public void IsIgnoreCase(string source, char pattern, bool expectedSuccess)
     {
-        var lexeme = Characters.IsIgnoreCase(pattern)(source);
+        var lexeme = Characters.Is(pattern, true)(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 
@@ -263,7 +263,7 @@ public sealed class CharactersTests
     [InlineData("b", 'a', true)]
     public void IsNotIgnoreCase(string source, char pattern, bool expectedSuccess)
     {
-        var lexeme = Characters.IsNotIgnoreCase(pattern)(source);
+        var lexeme = Characters.IsNot(pattern, true)(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 

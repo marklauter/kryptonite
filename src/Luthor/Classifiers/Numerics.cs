@@ -6,7 +6,7 @@ namespace Luthor.Classifiers;
 // todo: bench MatchInteger vs MatchIntegerFast to guarantee that MatchInteger2 is faster and has fewer allocations
 public static class Numerics
 {
-    public static Lexer MatchInteger => segment =>
+    public static Lexer IsInteger => segment =>
     {
         var start = segment;
         if (segment.Look() is '-' or '+')
@@ -29,7 +29,7 @@ public static class Numerics
         return Lexeme.Miss(start);
     };
 
-    public static Lexer MatchIntegerFast => segment =>
+    public static Lexer IsIntegerFast => segment =>
     {
         var start = segment;
         var length = segment.Length - segment.Offset;
@@ -54,15 +54,16 @@ public static class Numerics
         return Lexeme.Miss(start);
     };
 
-    public static Lexer MatchInteger3 =
-        Characters.Is('+').Or(Characters.Is('-'))
+    public static Lexer IsInteger3 =
+        Characters.Is('+')
+        .Or(Characters.Is('-'))
         .ZeroOrOne()
         .And(Characters.IsDigit.OneOrMore());
 
-    public static Lexer MatchFloatingPoint => segment =>
+    public static Lexer IsFloatingPoint => segment =>
     {
         var start = segment;
-        var lexeme = MatchInteger(segment);
+        var lexeme = IsInteger(segment);
         if (lexeme.Success)
         {
             segment = lexeme.Remainder;
@@ -86,17 +87,22 @@ public static class Numerics
         return Lexeme.Miss(start);
     };
 
-    public static Lexer MatchScientificNotation => segment =>
+    public static Lexer IsFloatingPoint2 =
+        IsInteger3
+        .And(Characters.Is('.'))
+        .And(Characters.IsDigit.OneOrMore());
+
+    public static Lexer IsScientificNotation => segment =>
     {
         var start = segment;
-        var lexeme = MatchFloatingPoint(segment);
+        var lexeme = IsFloatingPoint(segment);
         if (lexeme.Success)
         {
             segment = lexeme.Remainder;
             if (segment.Look() is 'e' or 'E')
             {
                 segment = segment.Advance();
-                lexeme = MatchInteger(segment);
+                lexeme = IsInteger(segment);
                 if (lexeme.Success)
                 {
                     return Lexeme.Hit(start, lexeme.Remainder);
@@ -107,7 +113,12 @@ public static class Numerics
         return Lexeme.Miss(start);
     };
 
-    public static Lexer MatchHexNotation => segment =>
+    public static Lexer IsScientificNotation2 =
+        IsFloatingPoint2
+        .And(Characters.Is('e', true))
+        .And(IsInteger3);
+
+    public static Lexer IsHexNotation => segment =>
     {
         var start = segment;
         if (segment.Look() == '0')
@@ -132,4 +143,9 @@ public static class Numerics
 
         return Lexeme.Miss(start);
     };
+
+    public static Lexer IsHexNotation2 =
+        Characters.Is('0')
+        .And(Characters.Is('x', true))
+        .And(Characters.IsHexDigit.OneOrMore());
 }

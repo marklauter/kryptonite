@@ -34,9 +34,9 @@ public sealed class NumericsTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchInteger(string source, bool expectedSuccess)
+    public void IsInteger(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchInteger(source);
+        var lexeme = Numerics.IsInteger(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (expectedSuccess)
         {
@@ -70,9 +70,9 @@ public sealed class NumericsTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchIntegerFast(string source, bool expectedSuccess)
+    public void IsIntegerFast(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchIntegerFast(source);
+        var lexeme = Numerics.IsIntegerFast(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (expectedSuccess)
         {
@@ -113,9 +113,9 @@ public sealed class NumericsTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchInteger3(string source, bool expectedSuccess)
+    public void IsInteger3(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchInteger3(source);
+        var lexeme = Numerics.IsInteger3(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (expectedSuccess)
         {
@@ -156,9 +156,53 @@ public sealed class NumericsTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchFloatingPoint(string source, bool expectedSuccess)
+    public void IsFloatingPoint(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchFloatingPoint(source);
+        var lexeme = Numerics.IsFloatingPoint(source);
+        Assert.Equal(expectedSuccess, lexeme.Success);
+        if (lexeme.Success)
+        {
+            source = source.Contains('E')
+                ? source.Split('E')[0]
+                : source.Contains('e')
+                    ? source.Split('e')[0]
+                    : source;
+
+            Assert.Equal(source, lexeme);
+        }
+    }
+
+    [Theory]
+    [InlineData("1", false)]
+    [InlineData("12", false)]
+    [InlineData("123456", false)]
+    [InlineData("+1", false)]
+    [InlineData("-1", false)]
+    [InlineData("+123", false)]
+    [InlineData("-123", false)]
+
+    [InlineData("1.0", true)]
+    [InlineData("12.0", true)]
+    [InlineData("123456.0", true)]
+    [InlineData("+1.0", true)]
+    [InlineData("-1.0", true)]
+    [InlineData("+123.0", true)]
+    [InlineData("-123.0", true)]
+
+    [InlineData("1.0E1", true)]
+    [InlineData("1.0e1", true)]
+    [InlineData("+1.0E1", true)]
+    [InlineData("-1.0e1", true)]
+    [InlineData("1.0E+1", true)]
+    [InlineData("1.0e-1", true)]
+
+    [InlineData("-", false)]
+    [InlineData("+", false)]
+    [InlineData("a", false)]
+    [InlineData(" ", false)]
+    public void IsFloatingPoint2(string source, bool expectedSuccess)
+    {
+        var lexeme = Numerics.IsFloatingPoint2(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
@@ -202,15 +246,56 @@ public sealed class NumericsTests
     [InlineData("+", false)]
     [InlineData("a", false)]
     [InlineData(" ", false)]
-    public void MatchScientificNotation(string source, bool expectedSuccess)
+    public void IsScientificNotation(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchScientificNotation(source);
+        var lexeme = Numerics.IsScientificNotation(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
             Assert.Equal(source, lexeme);
         }
     }
+
+    [Theory]
+    [InlineData("1", false)]
+    [InlineData("12", false)]
+    [InlineData("123456", false)]
+    [InlineData("+1", false)]
+    [InlineData("-1", false)]
+    [InlineData("+123", false)]
+    [InlineData("-123", false)]
+
+    [InlineData("1.0", false)]
+    [InlineData("12.0", false)]
+    [InlineData("123456.0", false)]
+    [InlineData("+1.0", false)]
+    [InlineData("-1.0", false)]
+    [InlineData("+123.0", false)]
+    [InlineData("-123.0", false)]
+
+    [InlineData("1E1", false)]
+
+    [InlineData("1.0E1", true)]
+    [InlineData("1.0e1", true)]
+    [InlineData("+1.0E1", true)]
+    [InlineData("-1.0e1", true)]
+    [InlineData("1.0E+1", true)]
+    [InlineData("1.0e-1", true)]
+
+    [InlineData("-", false)]
+    [InlineData("+", false)]
+    [InlineData("a", false)]
+    [InlineData(" ", false)]
+    public void IsScientificNotation2(string source, bool expectedSuccess)
+    {
+        var lexeme = Numerics.IsScientificNotation2(source);
+        Assert.Equal(expectedSuccess, lexeme.Success);
+        if (lexeme.Success)
+        {
+            Assert.Equal(source, lexeme);
+        }
+    }
+
     [Theory]
     [InlineData("1", false)]
     [InlineData("12", false)]
@@ -250,9 +335,9 @@ public sealed class NumericsTests
     [InlineData("0xf", true)]
     [InlineData("0xF", true)]
     [InlineData("0xfFfffFFaaff", true)]
-    public void MatchHexNotation(string source, bool expectedSuccess)
+    public void IsHexNotation(string source, bool expectedSuccess)
     {
-        var lexeme = Numerics.MatchHexNotation(source);
+        var lexeme = Numerics.IsHexNotation(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
         if (lexeme.Success)
         {
