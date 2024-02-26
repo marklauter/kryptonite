@@ -7,6 +7,9 @@ namespace Luthor.Classifiers;
 /// </summary>
 public static class Characters
 {
+    // [\s\S]
+    public static Lexer AnyCharacter => Lexeme.Hit;
+
     // [0-9]
     // \d
     public static Lexer IsDigit => segment => Char.IsDigit(segment.Look())
@@ -60,9 +63,6 @@ public static class Characters
         ? Lexeme.Hit(segment)
         : Lexeme.Miss(segment);
 
-    // [\s\S]
-    public static Lexer IsCharacter => Lexeme.Hit;
-
     // \w
     public static Lexer IsWordCharacter => segment =>
     {
@@ -109,7 +109,11 @@ public static class Characters
     public static Lexer IsWordBoundary => segment =>
     {
         var current = segment.Look();
-        var next = segment.LookAhead(1);
+        if (!segment.TryLookAhead(1, out var next))
+        {
+            // if we are at the end of the segment, then we are at a word boundary
+            return Lexeme.Hit(segment);
+        }
 
         var isCurrentWordChar = Char.IsLetterOrDigit(current) || current == '_';
         var isNextWordChar = Char.IsLetterOrDigit(next) || next == '_';
@@ -118,6 +122,11 @@ public static class Characters
             ? Lexeme.Hit(segment)
             : Lexeme.Miss(segment);
     };
+
+    public static Lexer IsEndOfSegment => segment =>
+        segment.EndOfSegment || segment.Look() == Char.MinValue
+            ? Lexeme.Hit(segment)
+            : Lexeme.Miss(segment);
 
     // c
     /// <summary>
@@ -137,13 +146,16 @@ public static class Characters
     /// <param name="c"></param>
     /// <param name="ignoreCase"></param>
     /// <returns></returns>
-    public static Lexer Is(char c, bool ignoreCase) => segment =>
-    {
-        var value = segment.Look();
-        return value == c || ignoreCase && Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c)
-            ? Lexeme.Hit(segment)
-            : Lexeme.Miss(segment);
-    };
+    public static Lexer Is(char c, bool ignoreCase) =>
+        !ignoreCase
+            ? Is(c)
+            : (segment =>
+            {
+                var value = segment.Look();
+                return value == c || Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c)
+                    ? Lexeme.Hit(segment)
+                    : Lexeme.Miss(segment);
+            });
 
     // ^c
     public static Lexer IsNot(char c) => segment =>
@@ -152,13 +164,16 @@ public static class Characters
             : Lexeme.Miss(segment);
 
     // [^cC]
-    public static Lexer IsNot(char c, bool ignoreCase) => segment =>
-    {
-        var value = segment.Look();
-        return !(value == c || ignoreCase && Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c))
-            ? Lexeme.Hit(segment)
-            : Lexeme.Miss(segment);
-    };
+    public static Lexer IsNot(char c, bool ignoreCase) =>
+        !ignoreCase
+            ? IsNot(c)
+            : (segment =>
+            {
+                var value = segment.Look();
+                return !(value == c || Char.ToUpperInvariant(value) == Char.ToUpperInvariant(c))
+                    ? Lexeme.Hit(segment)
+                    : Lexeme.Miss(segment);
+            });
 
     // [begin-end]
     public static Lexer InRange(char begin, char end) =>

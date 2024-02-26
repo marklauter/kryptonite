@@ -43,12 +43,44 @@ public sealed record StringSegment(
             ? Char.MinValue
             : Value[Offset + offset];
 
+    public bool TryLookAhead(int offset, out char value)
+    {
+        value = Char.MinValue;
+        if (Offset + offset >= Value.Length || offset < 0)
+        {
+            return false;
+        }
+
+        if (!EndOfSegment)
+        {
+            value = Value[Offset + offset];
+        }
+
+        return true;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public char LookBack(int offset) => Offset - offset < 0 || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfSegment
             ? Char.MinValue
             : Value[Offset - offset];
+
+    public bool TryLookBack(int offset, out char value)
+    {
+        value = Char.MinValue;
+        if (Offset - offset < 0 || offset < 0)
+        {
+            return false;
+        }
+
+        if (!EndOfSegment)
+        {
+            value = Value[Offset - offset];
+        }
+
+        return true;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator StringSegment(string value) => new(value);

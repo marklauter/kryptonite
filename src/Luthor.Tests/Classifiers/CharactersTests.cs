@@ -151,7 +151,7 @@ public sealed class CharactersTests
     [InlineData(".", true)]
     public void AnyCharacter(string source, bool expectedSuccess)
     {
-        var lexeme = Characters.IsCharacter(source);
+        var lexeme = Characters.AnyCharacter(source);
         Assert.Equal(expectedSuccess, lexeme.Success);
     }
 
