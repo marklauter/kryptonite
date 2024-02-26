@@ -1,7 +1,7 @@
 using Luthor.Classifiers;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Luthor.Tests.Lexers;
+namespace Luthor.Tests.Classifiers;
 
 [ExcludeFromCodeCoverage]
 public sealed class CharactersTests
