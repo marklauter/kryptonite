@@ -16,9 +16,9 @@ public sealed class QuantifierTests
     [InlineData("ba", "", 'a')]
     public void ZeroOrMore(string source, string expectedMatch, char c)
     {
-        var lexer = Characters.Is(c).ZeroOrMore();
+        var lexer = Character.Is(c).ZeroOrMore();
         var lexeme = lexer(source);
-        Assert.True(lexeme.Success);
+        Assert.True(lexeme.Matched);
         Assert.Equal(expectedMatch, lexeme);
     }
 }

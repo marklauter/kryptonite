@@ -22,11 +22,11 @@ public sealed class Lexer<TToken>(
         TToken Token,
         bool Ignored)
     {
-        public bool Success => Lexeme.Success;
+        public bool Success => Lexeme.Matched;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public MatchResult Match(StringSegment segment) => new(
+    public MatchResult Match(Input segment) => new(
         lexer.Invoke(segment),
         token,
         ignored);

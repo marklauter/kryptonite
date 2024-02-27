@@ -5,12 +5,17 @@ namespace Luthor.Classifiers;
 
 public static class RegexPatterns
 {
-    // todo: patterns require wrap in \G(?:{pattern})
-    public static Lexer MatchRegex(Regex pattern) => segment =>
+    // todo: patterns require wrap in \G(?:{pattern}) and require special regex.options
+    public static Lexer MatchRegex(Regex pattern)
     {
-        var match = pattern.Match(segment);
-        return match.Success
-            ? Lexeme.Hit(segment, segment.Advance(match.Length), match.Length)
-            : Lexeme.Miss(segment);
-    };
+        ArgumentNullException.ThrowIfNull(pattern);
+
+        return input =>
+        {
+            var match = pattern.Match(input);
+            return match.Success
+                ? Lexeme.Hit(input, input.Advance(match.Length), match.Length)
+                : Lexeme.Miss(input);
+        };
+    }
 }

@@ -9,11 +9,11 @@ public static class Quantifiers
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
-        return segment =>
+        return input =>
         {
-            var start = segment;
-            var lexeme = lexer(segment);
-            while (lexeme.Success)
+            var start = input;
+            var lexeme = lexer(input);
+            while (lexeme.Matched)
             {
                 lexeme = lexer(lexeme.Remainder);
             }
@@ -27,12 +27,12 @@ public static class Quantifiers
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
-        return segment =>
+        return input =>
         {
-            var lexeme = lexer(segment);
-            return lexeme.Success
+            var lexeme = lexer(input);
+            return lexeme.Matched
                 ? lexeme
-                : Lexeme.Hit(segment, segment); // a hit without consuming input
+                : Lexeme.Hit(input, input); // a hit without consuming input
         };
     }
 
@@ -41,13 +41,13 @@ public static class Quantifiers
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
-        return segment =>
+        return input =>
         {
-            var start = segment;
-            var lexeme = lexer(segment);
-            if (lexeme.Success) // meet the match one condition correctly
+            var start = input;
+            var lexeme = lexer(input);
+            if (lexeme.Matched) // meet the match one condition correctly
             {
-                while (lexeme.Success) // match more so we get the longest match and pass lexeme.Remainder to Hit
+                while (lexeme.Matched) // match more so we get the longest match and pass lexeme.Remainder to Hit
                 {
                     lexeme = lexer(lexeme.Remainder);
                 }

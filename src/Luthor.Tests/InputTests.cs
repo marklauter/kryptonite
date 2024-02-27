@@ -3,13 +3,13 @@
 namespace Luthor.Tests;
 
 [ExcludeFromCodeCoverage]
-public sealed class StringSegmentTests
+public sealed class InputTests
 {
     [Fact]
     public void Ctor()
     {
         var value = "1234";
-        var start = new StringSegment(value);
+        var start = new Input(value);
         Assert.Equal(0, start.Offset);
         Assert.Equal(4, start.Length);
         Assert.Equal(value[0], start.Look());
@@ -19,7 +19,7 @@ public sealed class StringSegmentTests
     [Fact]
     public void Advance()
     {
-        var start = new StringSegment("1234");
+        var start = new Input("1234");
         var next = start.Advance();
         Assert.Equal(1, next.Offset);
         Assert.Equal(3, next.Length);

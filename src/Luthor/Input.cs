@@ -7,39 +7,46 @@ namespace Luthor;
 /// </summary>
 /// <param name="Value"></param>
 /// <param name="Offset"></param>
-public sealed record StringSegment(
+public readonly record struct Input(
     string Value,
     int Offset)
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StringSegment(string segment)
-        : this(segment, 0)
+    public Input(string value)
+        : this(value, 0)
     { }
 
     public int Length => Value.Length - Offset;
-    public bool EndOfSegment => Offset >= Value.Length;
-
-    public static StringSegment Empty
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get;
-    } = new(String.Empty, 0);
+    public bool EndOfInput => Offset >= Value.Length;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StringSegment Advance() => Advance(1);
+    public Input Advance() => Advance(1);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StringSegment Advance(int length) => new(Value, Offset + length);
+    public Input Advance(int length) => new(Value, Offset + length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char Look() => EndOfSegment
+    public char Look() => EndOfInput
         ? Char.MinValue
         : Value[Offset];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryLook(out char value)
+    {
+        value = Char.MinValue;
+        if (EndOfInput)
+        {
+            return false;
+        }
+
+        value = Value[Offset];
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public char LookAhead(int offset) => Offset + offset >= Value.Length || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
-        : EndOfSegment
+        : EndOfInput
             ? Char.MinValue
             : Value[Offset + offset];
 
@@ -51,7 +58,7 @@ public sealed record StringSegment(
             return false;
         }
 
-        if (!EndOfSegment)
+        if (!EndOfInput)
         {
             value = Value[Offset + offset];
         }
@@ -62,7 +69,7 @@ public sealed record StringSegment(
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public char LookBack(int offset) => Offset - offset < 0 || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
-        : EndOfSegment
+        : EndOfInput
             ? Char.MinValue
             : Value[Offset - offset];
 
@@ -74,7 +81,7 @@ public sealed record StringSegment(
             return false;
         }
 
-        if (!EndOfSegment)
+        if (!EndOfInput)
         {
             value = Value[Offset - offset];
         }
@@ -83,10 +90,10 @@ public sealed record StringSegment(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator StringSegment(string value) => new(value);
+    public static implicit operator Input(string value) => new(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator string(StringSegment segment) => segment.ToString();
+    public static implicit operator string(Input segment) => segment.ToString();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan() => Value.AsSpan(Offset);

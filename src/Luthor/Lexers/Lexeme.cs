@@ -5,39 +5,66 @@ namespace Luthor.Lexers;
 public class Lexeme
 {
     protected Lexeme(
-        StringSegment match,
-        StringSegment remainder,
+        Input match,
+        Input remainder,
         int length,
-        bool success)
+        bool matched)
     {
-        Match = match ?? throw new ArgumentNullException(nameof(match));
-        Remainder = remainder ?? throw new ArgumentNullException(nameof(remainder));
+        Match = match;
+        Remainder = remainder;
         Length = length;
-        Success = success;
+        Matched = matched;
     }
 
-    public StringSegment Match { get; }
-    public StringSegment Remainder { get; }
+    public Input Match { get; }
+    public Input Remainder { get; }
     public int Length { get; }
-    public bool Success { get; }
+    public bool Matched { get; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Miss(StringSegment segment) => new(segment, segment, 0, false);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Hit(StringSegment match)
+    public static Lexeme Miss(Input input)
     {
-        var remainder = match.Advance();
-        return Hit(match, remainder);
+        ArgumentNullException.ThrowIfNull(input);
+
+        return new(input, input, 0, false);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Hit(StringSegment match, StringSegment remainder) => Hit(match, remainder, match.Length - remainder.Length);
+    public static Lexeme Hit(Input match)
+    {
+        ArgumentNullException.ThrowIfNull(match);
+
+        var remainder = match.Advance();
+        var length = match.Length - remainder.Length;
+
+        return length > -1
+            ? new Lexeme(match, remainder, length, true)
+            : throw new InvalidOperationException($"{nameof(length)} must be > 0");
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Lexeme Hit(StringSegment match, StringSegment remainder, int length) => length > -1
+    public static Lexeme Hit(Input match, Input remainder)
+    {
+        ArgumentNullException.ThrowIfNull(match);
+        ArgumentNullException.ThrowIfNull(remainder);
+
+        var length = match.Length - remainder.Length;
+
+        return length > -1
             ? new Lexeme(match, remainder, length, true)
-            : throw new ArgumentOutOfRangeException(nameof(length));
+            : throw new InvalidOperationException($"{nameof(length)} must be > 0");
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Lexeme Hit(Input match, Input remainder, int length)
+    {
+        ArgumentNullException.ThrowIfNull(match);
+        ArgumentNullException.ThrowIfNull(remainder);
+
+        return length > -1
+            ? new Lexeme(match, remainder, length, true)
+            : throw new InvalidOperationException($"{nameof(length)} must be > 0");
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator string(Lexeme lexeme) => lexeme.ToString();

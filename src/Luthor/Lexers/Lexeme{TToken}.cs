@@ -5,7 +5,7 @@ public sealed class Lexeme<TToken>(Lexeme lexeme, TToken token)
         lexeme?.Match ?? throw new ArgumentNullException(nameof(lexeme)),
         lexeme?.Remainder ?? throw new ArgumentNullException(nameof(lexeme)),
         lexeme?.Length ?? throw new ArgumentNullException(nameof(lexeme)),
-        lexeme?.Success ?? throw new ArgumentNullException(nameof(lexeme)))
+        lexeme?.Matched ?? throw new ArgumentNullException(nameof(lexeme)))
     where TToken : Enum
 {
     public TToken Token { get; } = token;

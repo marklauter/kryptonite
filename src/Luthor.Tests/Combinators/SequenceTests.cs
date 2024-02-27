@@ -11,43 +11,48 @@ public sealed class SequenceTests
     [InlineData("1", '1', '2', true)]
     [InlineData("1", '2', '1', true)]
     [InlineData("a", 'x', 'x', false)]
-    public void Or(string source, char lch, char rch, bool expectedMatch)
+    public void Or(string source, char leftChar, char rightChar, bool expectedMatch)
     {
-        var lexer = Characters
-            .Is(lch)
-            .Or(Characters.Is(rch));
+        var lexer = Character
+            .Is(leftChar)
+            .Or(Character.Is(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Success);
+        Assert.Equal(expectedMatch, lexeme.Matched);
     }
 
     [Theory]
-    [InlineData("12", '1', '2', true)]
-    [InlineData("12", '1', '1', false)]
-    [InlineData("12", '2', '2', false)]
-    [InlineData("12", '2', '1', false)]
-    [InlineData("ab", 'x', 'x', false)]
-    public void And(string source, char lch, char rch, bool expectedMatch)
+    [InlineData("1", '1', '2', true)]
+    [InlineData("1", '1', '1', false)]
+    [InlineData("1", '2', '2', false)]
+    [InlineData("1", '2', '1', false)]
+    [InlineData("a", 'x', 'x', false)]
+    public void And(string source, char leftChar, char rightChar, bool expectedMatch)
     {
-        var lexer = Characters
-            .Is(lch)
-            .And(Characters.Is(rch));
+        var lexer = Character
+            .Is(leftChar)
+            .And(Character.IsNot(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Success);
+        Assert.Equal(expectedMatch, lexeme.Matched);
     }
 
     [Theory]
     [InlineData("11", '1', '2', false)]
     [InlineData("22", '1', '2', false)]
     [InlineData("11", '1', '1', true)]
-    public void Then(string source, char lch, char rch, bool expectedMatch)
+    [InlineData("12", '1', '2', true)]
+    public void Then(string source, char leftChar, char rightChar, bool expectedMatch)
     {
-        var lexer = Characters
-            .Is(lch)
-            .Then(Characters.Is(rch));
+        var lexer = Character
+            .Is(leftChar)
+            .Then(Character.Is(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Success);
+        Assert.Equal(expectedMatch, lexeme.Matched);
+        if (expectedMatch)
+        {
+            Assert.Equal(source, lexeme);
+        }
     }
 }
