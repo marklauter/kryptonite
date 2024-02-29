@@ -29,6 +29,7 @@ public sealed class Result<T>(
     {
     }
 
+    // instead of allocating another input for location, we just track it with match offset
     public int MatchOffset { get; } = input.Offset;
     public Input Remainder { get; } =
         length > 0
