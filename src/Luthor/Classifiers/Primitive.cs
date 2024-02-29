@@ -14,13 +14,13 @@ public static class Primitives
 
     // zero :: Parser a
     // zero = \inp-> []
-    public static Parser<Empty> Zero => Luthor.Result.Empty<Empty>;
+    public static Parser<T> Zero<T>() => Luthor.Result.Empty<T>;
 
     // item :: Parser Char
     // item = \inp-> case inp of
     //  []      -> []var
     //  (x:xs)  -> [(x, xs)]
-    public static Parser<char> Item => input =>
+    public static Parser<char> Item() => input =>
         Luthor.Result.New(
             input.Peek(),
             input,
