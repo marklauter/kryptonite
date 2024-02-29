@@ -1,11 +1,9 @@
-﻿using Luthor.Lexers;
-
-namespace Luthor.Combinators;
+﻿namespace Luthor.Combinators;
 
 public static class Quantifiers
 {
     // *
-    public static Lexer ZeroOrMore(this Lexer lexer)
+    public static Parser<ParseResult> ZeroOrMore(this Parser<ParseResult> lexer)
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
@@ -13,31 +11,31 @@ public static class Quantifiers
         {
             var start = input;
             var lexeme = lexer(input);
-            while (lexeme.Matched)
+            while (lexeme.HasValue)
             {
                 lexeme = lexer(lexeme.Remainder);
             }
 
-            return Lexeme.Hit(start, lexeme.Remainder);
+            return ParseResult.Hit(start, lexeme.Remainder);
         };
     }
 
     // ?
-    public static Lexer ZeroOrOne(this Lexer lexer)
+    public static Parser<ParseResult> ZeroOrOne(this Parser<ParseResult> lexer)
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
         return input =>
         {
             var lexeme = lexer(input);
-            return lexeme.Matched
+            return lexeme.HasValue
                 ? lexeme
-                : Lexeme.Hit(input, input); // a hit without consuming input
+                : ParseResult.Hit(input, input); // a hit without consuming input
         };
     }
 
     // +
-    public static Lexer OneOrMore(this Lexer lexer)
+    public static Parser<ParseResult> OneOrMore(this Parser<ParseResult> lexer)
     {
         ArgumentNullException.ThrowIfNull(lexer);
 
@@ -45,28 +43,28 @@ public static class Quantifiers
         {
             var start = input;
             var lexeme = lexer(input);
-            if (lexeme.Matched) // meet the match one condition correctly
+            if (lexeme.HasValue) // meet the match one condition correctly
             {
-                while (lexeme.Matched) // match more so we get the longest match and pass lexeme.Remainder to Hit
+                while (lexeme.HasValue) // match more so we get the longest match and pass lexeme.Remainder to Hit
                 {
                     lexeme = lexer(lexeme.Remainder);
                 }
 
-                return Lexeme.Hit(start, lexeme.Remainder);
+                return ParseResult.Hit(start, lexeme.Remainder);
             }
 
-            return Lexeme.Miss(start);
+            return ParseResult.Miss(start);
         };
     }
 
     // {n}
-    public static Lexer Exactly(int n) => throw new NotImplementedException(nameof(Exactly));
+    public static Parser<ParseResult> Exactly(int n) => throw new NotImplementedException(nameof(Exactly));
 
     // {n,}
-    public static Lexer AtLeast(int n) =>
+    public static Parser<ParseResult> AtLeast(int n) =>
         // todo: look at OneOrMore for guidance
         throw new NotImplementedException(nameof(AtLeast));
 
     // {n, m}
-    public static Lexer AtLeastButNoMore(int n, int m) => throw new NotImplementedException(nameof(AtLeastButNoMore));
+    public static Parser<ParseResult> AtLeastButNoMore(int n, int m) => throw new NotImplementedException(nameof(AtLeastButNoMore));
 }

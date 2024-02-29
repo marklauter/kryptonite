@@ -18,7 +18,7 @@ public sealed class QuantifierTests
     {
         var lexer = Character.Is(c).ZeroOrMore();
         var lexeme = lexer(source);
-        Assert.True(lexeme.Matched);
+        Assert.True(lexeme.HasValue);
         Assert.Equal(expectedMatch, lexeme);
     }
 }

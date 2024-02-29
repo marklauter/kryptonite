@@ -1,21 +1,20 @@
 ﻿using Luthor.Combinators;
-using Luthor.Lexers;
 
 namespace Luthor.Classifiers;
 
 public static class Text
 {
-    public static Lexer CIdentifier =
+    public static Parser<ParseResult> CIdentifier =
         Character.IsLetter
         .Or(Character.Is('_'))
         .Then(Character.IsWordCharacter.ZeroOrMore());
 
-    public static Lexer IsWord =
+    public static Parser<ParseResult> IsWord =
         Character.IsWordCharacter
         .OneOrMore()
         .Then(Character.IsWordBoundary);
 
-    public static Lexer Is(string pattern)
+    public static Parser<ParseResult> Is(string pattern)
     {
         ArgumentNullException.ThrowIfNull(pattern);
 
@@ -26,7 +25,7 @@ public static class Text
             var length = input.Length - input.Offset;
             var offset = start.Offset;
             var index = 0;
-            var isMatch = offset < length && pattern[index] == input.LookAhead(offset);
+            var isMatch = offset < length && pattern[index] == input.PeekAhead(offset);
             if (isMatch)
             {
                 while (isMatch)
@@ -35,19 +34,19 @@ public static class Text
                     ++index;
                     isMatch = offset < length
                         && index < literalLength
-                        && pattern[index] == input.LookAhead(offset);
+                        && pattern[index] == input.PeekAhead(offset);
                 }
 
                 return pattern.Length == offset - start.Offset
-                    ? Lexeme.Hit(start, input.Advance(offset - start.Offset))
-                    : Lexeme.Miss(start);
+                    ? ParseResult.Hit(start, offset - start.Offset)
+                    : ParseResult.Miss(start);
             }
 
-            return Lexeme.Miss(start);
+            return ParseResult.Miss(start);
         };
     }
 
-    public static Lexer Is(string pattern, bool ignoreCase)
+    public static Parser<ParseResult> Is(string pattern, bool ignoreCase)
     {
         if (!ignoreCase)
         {
@@ -65,7 +64,7 @@ public static class Text
             var offset = start.Offset;
             var index = 0;
             var isMatch = offset < length
-                && pattern[index] == Char.ToUpperInvariant(input.LookAhead(offset));
+                && pattern[index] == Char.ToUpperInvariant(input.PeekAhead(offset));
 
             if (isMatch)
             {
@@ -75,30 +74,22 @@ public static class Text
                     ++index;
                     isMatch = offset < length
                         && index < patternLength
-                        && pattern[index] == Char.ToUpperInvariant(input.LookAhead(offset));
+                        && pattern[index] == Char.ToUpperInvariant(input.PeekAhead(offset));
                 }
 
                 return pattern.Length == offset - start.Offset
-                    ? Lexeme.Hit(start, input.Advance(offset - start.Offset))
-                    : Lexeme.Miss(start);
+                    ? ParseResult.Hit(start, offset - start.Offset)
+                    : ParseResult.Miss(start);
             }
 
-            return Lexeme.Miss(start);
+            return ParseResult.Miss(start);
         };
     }
 
-    public static Lexer StringLiteral(char delimiter)
-    {
-        var body =
-            Character.NotIn('\\', delimiter)
+    public static Parser<ParseResult> StringLiteral(char delimiter) =>
+        Character.Is(delimiter)
+        .Then(Character.NotIn('\\', delimiter)
             .Or(Character.Is('\\')
-            .Then(Character.Any));
-
-        var stringLiteral =
-            Character.Is(delimiter)
-            .Then(body.ZeroOrMore())
-            .Then(Character.Is(delimiter));
-
-        return segment => stringLiteral(segment);
-    }
+            .Then(Character.Any)).ZeroOrMore())
+        .Then(Character.Is(delimiter));
 }

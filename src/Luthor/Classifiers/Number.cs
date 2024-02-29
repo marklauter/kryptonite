@@ -1,53 +1,52 @@
 ﻿using Luthor.Combinators;
-using Luthor.Lexers;
 
 namespace Luthor.Classifiers;
 
 // todo: bench MatchInteger vs MatchIntegerFast to guarantee that MatchInteger2 is faster and has fewer allocations
 public static class Number
 {
-    public static Lexer IsIntegerFast => input =>
+    public static Parser<ParseResult> IsIntegerFast => input =>
     {
         var start = input;
         var length = input.Length - input.Offset;
         var offset = start.Offset;
-        if (input.Look() is '-' or '+')
+        if (input.Peek() is '-' or '+')
         {
             ++offset;
         }
 
-        var isDigit = offset < length && Char.IsDigit(input.LookAhead(offset));
+        var isDigit = offset < length && Char.IsDigit(input.PeekAhead(offset));
         if (isDigit)
         {
             while (isDigit)
             {
                 ++offset;
-                isDigit = offset < length && Char.IsDigit(input.LookAhead(offset));
+                isDigit = offset < length && Char.IsDigit(input.PeekAhead(offset));
             }
 
-            return Lexeme.Hit(start, input.Advance(offset - start.Offset));
+            return ParseResult.Hit(start, input.Advance(offset - start.Offset));
         }
 
-        return Lexeme.Miss(start);
+        return ParseResult.Miss(start);
     };
 
-    public static Lexer IsInteger =
+    public static Parser<ParseResult> IsInteger =
         Character.Is('+')
         .Or(Character.Is('-'))
         .ZeroOrOne()
         .Then(Character.IsDigit.OneOrMore());
 
-    public static Lexer IsFloatingPoint =
+    public static Parser<ParseResult> IsFloatingPoint =
         IsInteger
         .Then(Character.Is('.'))
         .Then(Character.IsDigit.OneOrMore());
 
-    public static Lexer IsScientificNotation =
+    public static Parser<ParseResult> IsScientificNotation =
         IsFloatingPoint
         .Then(Character.Is('e', true))
         .Then(IsInteger);
 
-    public static Lexer IsHexNotation =
+    public static Parser<ParseResult> IsHexNotation =
         Character.Is('0')
         .Then(Character.Is('x', true))
         .Then(Character.IsHexDigit.OneOrMore());

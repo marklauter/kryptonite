@@ -9,21 +9,24 @@ public sealed class InputTests
     public void Ctor()
     {
         var value = "1234";
-        var start = new Input(value);
-        Assert.Equal(0, start.Offset);
-        Assert.Equal(4, start.Length);
-        Assert.Equal(value[0], start.Look());
-        Assert.Equal(value, start);
+        var input = (Input)value;
+        Assert.Equal(0, input.Offset);
+        Assert.Equal(4, input.Length);
+        Assert.Equal(value[0], input.Peek());
+        Assert.Equal(value[1], input.PeekAhead(1));
+        Assert.Equal(value[2], input.PeekAhead(2));
+        Assert.Equal(value[3], input.PeekAhead(3));
+        Assert.Equal(value, input);
     }
 
     [Fact]
     public void Advance()
     {
-        var start = new Input("1234");
+        var start = (Input)"1234";
         var next = start.Advance();
         Assert.Equal(1, next.Offset);
         Assert.Equal(3, next.Length);
-        Assert.Equal('2', next.Look());
+        Assert.Equal('2', next.Peek());
         Assert.Equal("234", next);
     }
 }

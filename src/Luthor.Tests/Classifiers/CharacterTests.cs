@@ -12,7 +12,7 @@ public sealed class CharacterTests
     public void AnyDigit(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsDigit(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -41,7 +41,7 @@ public sealed class CharacterTests
     public void AnyHexDigit(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsHexDigit(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -51,7 +51,7 @@ public sealed class CharacterTests
     public void AnyNonDigit(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsNonDigit(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -61,7 +61,7 @@ public sealed class CharacterTests
     public void AnyLetter(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsLetter(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -71,7 +71,7 @@ public sealed class CharacterTests
     public void AnyNonLetter(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsNonLetter(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -84,7 +84,7 @@ public sealed class CharacterTests
     public void AnyWhitespace(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsWhitespace(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -97,7 +97,7 @@ public sealed class CharacterTests
     public void AnyNonWhitespace(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsNonWhitespace(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -110,7 +110,7 @@ public sealed class CharacterTests
     public void AnyNonNewLine(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsNonNewLine(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -124,7 +124,7 @@ public sealed class CharacterTests
     public void AnyLowerCase(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsLowerCase(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -138,7 +138,7 @@ public sealed class CharacterTests
     public void AnyUpperCase(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsUpperCase(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -152,7 +152,7 @@ public sealed class CharacterTests
     public void AnyCharacter(string source, bool expectedSuccess)
     {
         var lexeme = Character.Any(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -167,7 +167,7 @@ public sealed class CharacterTests
     public void AnyWordCharacter(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsWordCharacter(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -182,7 +182,7 @@ public sealed class CharacterTests
     public void AnyNonWordCharacter(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsNonWordCharacter(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -199,7 +199,7 @@ public sealed class CharacterTests
     public void AnySeparator(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsSeparator(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -219,7 +219,7 @@ public sealed class CharacterTests
     public void AnyPunctuation(string source, bool expectedSuccess)
     {
         var lexeme = Character.IsPunctuation(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -231,7 +231,7 @@ public sealed class CharacterTests
     public void Is(string source, char pattern, bool expectedSuccess)
     {
         var lexeme = Character.Is(pattern)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -243,7 +243,7 @@ public sealed class CharacterTests
     public void IsIgnoreCase(string source, char pattern, bool expectedSuccess)
     {
         var lexeme = Character.Is(pattern, true)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -252,7 +252,7 @@ public sealed class CharacterTests
     public void IsNot(string source, char pattern, bool expectedSuccess)
     {
         var lexeme = Character.IsNot(pattern)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -264,35 +264,35 @@ public sealed class CharacterTests
     public void IsNotIgnoreCase(string source, char pattern, bool expectedSuccess)
     {
         var lexeme = Character.IsNot(pattern, true)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Fact]
     public void IsBell()
     {
         var lexeme = Character.IsBell("\a");
-        Assert.True(lexeme.Matched);
+        Assert.True(lexeme.HasValue);
     }
 
     [Fact]
     public void IsBackspace()
     {
         var lexeme = Character.IsBackspace("\b");
-        Assert.True(lexeme.Matched);
+        Assert.True(lexeme.HasValue);
     }
 
     [Fact]
     public void IsNewLine()
     {
         var lexeme = Character.IsNewLine("\n");
-        Assert.True(lexeme.Matched);
+        Assert.True(lexeme.HasValue);
     }
 
     [Fact]
     public void IsTab()
     {
         var lexeme = Character.IsTab("\t");
-        Assert.True(lexeme.Matched);
+        Assert.True(lexeme.HasValue);
     }
 
     [Theory]
@@ -307,7 +307,7 @@ public sealed class CharacterTests
     public void InRange(string source, char begin, char end, bool expectedSuccess)
     {
         var lexeme = Character.InRange(begin, end)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Fact]
@@ -327,7 +327,7 @@ public sealed class CharacterTests
     public void In(string source, char[] set, bool expectedSuccess)
     {
         var lexeme = Character.In(set)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -344,7 +344,7 @@ public sealed class CharacterTests
     public void InIgnoreCase(string source, char[] set, bool expectedSuccess)
     {
         var lexeme = Character.InIgnoreCase(set)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -357,7 +357,7 @@ public sealed class CharacterTests
     public void NotIn(string source, char[] set, bool expectedSuccess)
     {
         var lexeme = Character.NotIn(set)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 
     [Theory]
@@ -374,6 +374,6 @@ public sealed class CharacterTests
     public void NotInIgnoreCase(string source, char[] set, bool expectedSuccess)
     {
         var lexeme = Character.NotInIgnoreCase(set)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
     }
 }

@@ -18,7 +18,7 @@ public sealed class SequenceTests
             .Or(Character.Is(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Matched);
+        Assert.Equal(expectedMatch, lexeme.HasValue);
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public sealed class SequenceTests
             .And(Character.IsNot(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Matched);
+        Assert.Equal(expectedMatch, lexeme.HasValue);
     }
 
     [Theory]
@@ -49,7 +49,7 @@ public sealed class SequenceTests
             .Then(Character.Is(rightChar));
 
         var lexeme = lexer(source);
-        Assert.Equal(expectedMatch, lexeme.Matched);
+        Assert.Equal(expectedMatch, lexeme.HasValue);
         if (expectedMatch)
         {
             Assert.Equal(source, lexeme);

@@ -37,7 +37,7 @@ public sealed class NumericTests
     public void IsInteger(string source, bool expectedSuccess)
     {
         var lexeme = Number.IsInteger(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
         if (expectedSuccess)
         {
             if (source.Contains('.'))
@@ -73,7 +73,7 @@ public sealed class NumericTests
     public void IsIntegerFast(string source, bool expectedSuccess)
     {
         var lexeme = Number.IsIntegerFast(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
         if (expectedSuccess)
         {
             if (source.Contains('.'))
@@ -116,8 +116,8 @@ public sealed class NumericTests
     public void IsFloatingPoint(string source, bool expectedSuccess)
     {
         var lexeme = Number.IsFloatingPoint(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             source = source.Contains('E')
                 ? source.Split('E')[0]
@@ -162,8 +162,8 @@ public sealed class NumericTests
     public void IsScientificNotation(string source, bool expectedSuccess)
     {
         var lexeme = Number.IsScientificNotation(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(source, lexeme);
         }
@@ -211,8 +211,8 @@ public sealed class NumericTests
     public void IsHexNotation(string source, bool expectedSuccess)
     {
         var lexeme = Number.IsHexNotation(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(source, lexeme);
         }

@@ -11,13 +11,16 @@ public readonly record struct Input(
     string Value,
     int Offset)
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Input(string value)
-        : this(value, 0)
-    { }
-
     public int Length => Value.Length - Offset;
     public bool EndOfInput => Offset >= Value.Length;
+
+    public static Input Empty { get; } = new(String.Empty, 0);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Input() : this(String.Empty, 0) { }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Input(string value) : this(value, 0) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Input Advance() => Advance(1);
@@ -26,12 +29,10 @@ public readonly record struct Input(
     public Input Advance(int length) => new(Value, Offset + length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char Look() => EndOfInput
-        ? Char.MinValue
-        : Value[Offset];
+    public char Peek() => EndOfInput ? Char.MinValue : Value[Offset];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryLook(out char value)
+    public bool TryPeek(out char value)
     {
         value = Char.MinValue;
         if (EndOfInput)
@@ -44,16 +45,16 @@ public readonly record struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char LookAhead(int offset) => Offset + offset >= Value.Length || offset < 0
+    public char PeekAhead(int offset) => Offset + offset >= Value.Length || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfInput
             ? Char.MinValue
             : Value[Offset + offset];
 
-    public bool TryLookAhead(int offset, out char value)
+    public bool TryPeekAhead(int offset, out char value)
     {
         value = Char.MinValue;
-        if (Offset + offset >= Value.Length || offset < 0)
+        if (offset < 0 || Offset + offset >= Value.Length)
         {
             return false;
         }
@@ -67,16 +68,16 @@ public readonly record struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char LookBack(int offset) => Offset - offset < 0 || offset < 0
+    public char PeekBehind(int offset) => Offset - offset < 0 || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfInput
             ? Char.MinValue
             : Value[Offset - offset];
 
-    public bool TryLookBack(int offset, out char value)
+    public bool TryPeekBehind(int offset, out char value)
     {
         value = Char.MinValue;
-        if (Offset - offset < 0 || offset < 0)
+        if (offset < 0 || Offset - offset < 0)
         {
             return false;
         }

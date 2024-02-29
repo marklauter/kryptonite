@@ -14,8 +14,8 @@ public sealed class TextTests
     public void Is(string source, string pattern, bool expectedSuccess)
     {
         var lexeme = Text.Is(pattern)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(pattern, lexeme);
         }
@@ -29,8 +29,8 @@ public sealed class TextTests
     public void IsIgnoreCase(string source, string pattern, bool expectedSuccess)
     {
         var lexeme = Text.Is(pattern, true)(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(pattern, lexeme, true);
         }
@@ -49,8 +49,8 @@ public sealed class TextTests
     public void CSharpIdentifier(string source, string expectedMatch, bool expectedSuccess)
     {
         var lexeme = Text.CIdentifier(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(expectedMatch, lexeme, true);
         }
@@ -63,8 +63,8 @@ public sealed class TextTests
     public void StringLiteral(string source, string expectedMatch, bool expectedSuccess)
     {
         var lexeme = Text.StringLiteral('"')(source);
-        Assert.Equal(expectedSuccess, lexeme.Matched);
-        if (lexeme.Matched)
+        Assert.Equal(expectedSuccess, lexeme.HasValue);
+        if (lexeme.HasValue)
         {
             Assert.Equal(expectedMatch, lexeme.AsSpan()[1..^1]);
         }

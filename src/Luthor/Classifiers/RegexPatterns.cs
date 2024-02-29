@@ -1,12 +1,11 @@
-﻿using Luthor.Lexers;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Luthor.Classifiers;
 
 public static class RegexPatterns
 {
     // todo: patterns require wrap in \G(?:{pattern}) and require special regex.options
-    public static Lexer MatchRegex(Regex pattern)
+    public static Parser<ParseResult> MatchRegex(Regex pattern)
     {
         ArgumentNullException.ThrowIfNull(pattern);
 
@@ -14,8 +13,8 @@ public static class RegexPatterns
         {
             var match = pattern.Match(input);
             return match.Success
-                ? Lexeme.Hit(input, input.Advance(match.Length), match.Length)
-                : Lexeme.Miss(input);
+                ? ParseResult.Hit(input, match.Length)
+                : ParseResult.Miss(input);
         };
     }
 }
