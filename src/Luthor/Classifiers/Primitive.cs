@@ -18,8 +18,12 @@ public static class Primitives
 
     // item :: Parser Char
     // item = \inp-> case inp of
-    //  []      -> []
+    //  []      -> []var
     //  (x:xs)  -> [(x, xs)]
     public static Parser<char> Item => input =>
-        Luthor.Result.New(input.Peek(), input, input.EndOfInput, Convert.ToInt32(input.EndOfInput));
+        Luthor.Result.New(
+            input.Peek(),
+            input,
+            input.EndOfInput ? input : input.Advance(),
+            input.EndOfInput);
 }

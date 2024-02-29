@@ -19,14 +19,30 @@ public static class Sequences
                 return firstResult.CastEmpty<TFirst, TSecond>();
             }
 
-            var secondResult = function(firstResult.Value)(firstResult.Remainder);
-            if (!secondResult.HasValue)
-            {
-                return secondResult;
-            }
+            var secondResult =
+                function(firstResult.Value)(firstResult.Remainder);
 
-            var length = secondResult.Remainder.Offset - input.Offset;
-            return Result.WithValue(secondResult.Value, input, length);
+            return !secondResult.HasValue
+                ? secondResult
+                : Result.WithValue(secondResult.Value, input, secondResult.Remainder);
+        };
+    }
+
+    // sat :: (Char-> Bool) -> Parser Char
+    // sat p = item bind \x ->
+    //         if p x then result x else zero
+    public static Parser<char> Satisfy(Func<char, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        return input =>
+        {
+            var result = Primitives.Item(input);
+            return !result.HasValue
+                ? result
+                : predicate(result.Value)
+                    ? Result.WithValue(result.Value, input, result.Remainder)
+                    : Result.Empty<char>(input);
         };
     }
 }
