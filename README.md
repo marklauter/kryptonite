@@ -1,8 +1,8 @@
-![kryptonite logo](https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor-small.png)
-
 # kryptonite
 
-A C# combinatory parser based on the ideas expressed in Superpower and Sprache. This is me exploring and reimplementing the ideas for educational pursposes, but also these two projects appear abandoned and it has been at least a year since either project has had any activity. So maybe with the magic of dotnet 8 & C# 12, I can build something similar to Superpower while making use of Span<T> and ref structs to minimize allocation.
+![kryptonite logo](https://github.com/marklauter/kryptonite/blob/mpc/lex-luthor-small.png)
+
+Kryptonite is a C# monadic combinatory parser based on the ideas expressed in Superpower and Sprache. I'm trying to implement the ideas straight out of Hutton's & Meijer's paper, but the occational peek at Superpower helps to clarify the ideas expressed in the paper. I was originally introduced to the MPC idea through one of the Nicholas Blumhart's presentations shared in the refrences section.
 
 ## refrences
 - Graham Hutton's & Erik Meijer's paper on monadic parser combinators: https://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf
