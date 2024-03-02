@@ -1,5 +1,5 @@
 # kryptonite
-<img src="https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor.png" width=350 height=350 align="right" />
+<img src="https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor.png" width=350 height=350 align="left" />
 
 A C# combinatory parser based on the ideas expressed in Superpower and Sprache. This is me exploring and reimplementing the ideas for educational pursposes, but also these two projects appear abandoned and it has been at least a year since either project has had any activity. So maybe with the magic of dotnet 8 & C# 12, I can build something similar to Superpower while making use of Span<T> and ref structs to minimize allocation.
 
