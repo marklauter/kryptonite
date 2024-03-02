@@ -8,18 +8,28 @@ namespace Luthor;
 /// </summary>
 /// <param name="Value"></param>
 /// <param name="Offset"></param>
-public readonly struct Input(
-    char[] value,
-    int offset)
+public readonly struct Input
     : IEquatable<Input>
 {
-    public readonly char[] Value = value;
-    public readonly int Offset = offset;
+    public readonly char[] Value;
+    public readonly int Offset;
 
     public int Length => Value.Length - Offset;
     public bool EndOfInput => Offset >= Value.Length;
 
     public static readonly Input Empty = new([], 0);
+
+    public Input(char[] value, int offset)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        if (offset < 0 || offset > value.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(offset));
+        }
+
+        Value = value;
+        Offset = offset;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Input() : this([], 0) { }
@@ -49,13 +59,13 @@ public readonly struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char PeekAhead(uint offset) => Offset + offset >= Value.Length || offset < 0
+    public char PeekAhead(int offset) => Offset + offset >= Value.Length || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfInput
             ? Char.MinValue
             : Value[Offset + offset];
 
-    public bool TryPeekAhead(uint offset, out char value)
+    public bool TryPeekAhead(int offset, out char value)
     {
         value = Char.MinValue;
         if (offset < 0 || Offset + offset >= Value.Length)
@@ -72,13 +82,13 @@ public readonly struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char PeekBehind(uint offsetFromEnd) => Offset - offsetFromEnd < 0 || offsetFromEnd < 0
+    public char PeekBehind(int offsetFromEnd) => Offset - offsetFromEnd < 0 || offsetFromEnd < 0
         ? throw new ArgumentOutOfRangeException(nameof(offsetFromEnd))
         : EndOfInput
             ? Char.MinValue
             : Value[Offset - offsetFromEnd];
 
-    public bool TryPeekBehind(uint offsetFromEnd, out char value)
+    public bool TryPeekBehind(int offsetFromEnd, out char value)
     {
         value = Char.MinValue;
         if (offsetFromEnd < 0 || Offset - offsetFromEnd < 0)
