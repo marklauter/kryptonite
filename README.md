@@ -1,5 +1,5 @@
 # kryptonite
-<div style="float: left; width: 360px" >
+<div style="display: block; float: left; width: 360px" >
 <img src="https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor.png" width=350 height=350 align="left" />  
 </div>
 
