@@ -1,26 +1,31 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Luthor;
 
 /// <summary>
-/// immutable reference to a string with an offset pointer to the character to be observed by the lexer
+/// immutable reference to a string with an offset to the next char be observed by the lexer
 /// </summary>
 /// <param name="Value"></param>
 /// <param name="Offset"></param>
-public readonly record struct Input(
-    string Value,
-    int Offset)
+public readonly struct Input(
+    char[] value,
+    int offset)
+    : IEquatable<Input>
 {
+    public readonly char[] Value = value;
+    public readonly int Offset = offset;
+
     public int Length => Value.Length - Offset;
     public bool EndOfInput => Offset >= Value.Length;
 
-    public static Input Empty { get; } = new(String.Empty, 0);
+    public static readonly Input Empty = new([], 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Input() : this(String.Empty, 0) { }
+    public Input() : this([], 0) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Input(string value) : this(value, 0) { }
+    private Input(char[] value) : this(value, 0) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Input Advance() => Advance(1);
@@ -31,7 +36,6 @@ public readonly record struct Input(
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public char Peek() => EndOfInput ? Char.MinValue : Value[Offset];
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryPeek(out char value)
     {
         value = Char.MinValue;
@@ -45,13 +49,13 @@ public readonly record struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char PeekAhead(int offset) => Offset + offset >= Value.Length || offset < 0
+    public char PeekAhead(uint offset) => Offset + offset >= Value.Length || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfInput
             ? Char.MinValue
             : Value[Offset + offset];
 
-    public bool TryPeekAhead(int offset, out char value)
+    public bool TryPeekAhead(uint offset, out char value)
     {
         value = Char.MinValue;
         if (offset < 0 || Offset + offset >= Value.Length)
@@ -68,36 +72,50 @@ public readonly record struct Input(
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char PeekBehind(int offset) => Offset - offset < 0 || offset < 0
-        ? throw new ArgumentOutOfRangeException(nameof(offset))
+    public char PeekBehind(uint offsetFromEnd) => Offset - offsetFromEnd < 0 || offsetFromEnd < 0
+        ? throw new ArgumentOutOfRangeException(nameof(offsetFromEnd))
         : EndOfInput
             ? Char.MinValue
-            : Value[Offset - offset];
+            : Value[Offset - offsetFromEnd];
 
-    public bool TryPeekBehind(int offset, out char value)
+    public bool TryPeekBehind(uint offsetFromEnd, out char value)
     {
         value = Char.MinValue;
-        if (offset < 0 || Offset - offset < 0)
+        if (offsetFromEnd < 0 || Offset - offsetFromEnd < 0)
         {
             return false;
         }
 
         if (!EndOfInput)
         {
-            value = Value[Offset - offset];
+            value = Value[Offset - offsetFromEnd];
         }
 
         return true;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator Input(string value) => new(value);
+    public static implicit operator Input(string value) => new([.. value]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator string(Input segment) => segment.ToString();
+    public ReadOnlySpan<char> AsSpan() => Value.AsSpan()[Offset..];
+
+    public override bool Equals([NotNullWhen(true)] object? obj) =>
+        obj is not null &&
+        obj is Input input &&
+        input == this;
+
+    public override string ToString() => new(Value[Offset..]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<char> AsSpan() => Value.AsSpan(Offset);
+    public static bool operator ==(Input left, Input right) =>
+        left.Offset == right.Offset &&
+        ReferenceEquals(left.Value, right.Value);
 
-    public override string ToString() => Value[Offset..];
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(Input left, Input right) => !(left == right);
+
+    public override int GetHashCode() => HashCode.Combine(this, Value, Offset);
+
+    public bool Equals(Input other) => this == other;
 }

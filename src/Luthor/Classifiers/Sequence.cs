@@ -1,6 +1,6 @@
 ﻿namespace Luthor.Classifiers;
 
-public static class Sequences
+public static class Sequence
 {
     // bind :: Parser a-> (a-> Parser b)-> Parser b
     // p bind f = \inp-> concat[f v inp | (v, inp) < -p inp]
