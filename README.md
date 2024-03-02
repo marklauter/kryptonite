@@ -1,4 +1,4 @@
-![kryptonite logo](https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor-small.png)
+![kryptonite logo](https://github.com/marklauter/kryptonite/blob/mpc/lex-luthor-small.png)
 
 # kryptonite
 
