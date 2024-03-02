@@ -12,9 +12,9 @@ public sealed class PrimitivesTests
     public void ResultV(string source)
     {
         var input = (Input)source;
-        var result = Primitives.Result('1')(input);
+        var result = Primitives.Result(1)(input);
         Assert.True(result.HasValue);
-        Assert.Equal('1', result.Value);
+        Assert.Equal(1, result.Value);
         Assert.Equal(input, result.Match);
         Assert.Equal(input, result.Remainder);
     }
