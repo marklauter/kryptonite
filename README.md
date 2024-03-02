@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor.png" width=350 height=350 align="right" />
+<img src="https://raw.githubusercontent.com/marklauter/kryptonite/main/lex-luthor.png" width=350 height=350 align="right" clear="right" />
 
 # kryptonite
 
