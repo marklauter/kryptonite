@@ -17,10 +17,6 @@ public static class ParseResult
         new(value, match, remainder, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ParseResult<T> New<T>(T value, Input input, Input remainder, bool hasValue) =>
-        new(value, input, remainder, hasValue);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ParseResult<TOut> CastEmpty<TIn, TOut>(this ParseResult<TIn> result) =>
         new(default!, result.Match, result.Remainder, false);
 }

@@ -74,6 +74,7 @@ public static class Parser
     // sat :: (Char-> Bool) -> Parser Char
     // sat p = item bind \x ->
     //         if p x then result x else zero
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Parser<char> Satisfy(Func<char, bool> predicate)
     {
         ArgumentNullException.ThrowIfNull(predicate);
@@ -83,4 +84,24 @@ public static class Parser
                 ? Result(ch)
                 : Zero<char>());
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Char(char expectedChar) =>
+        Satisfy(actualChar => actualChar == expectedChar);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Digit() =>
+        Satisfy(System.Char.IsDigit);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Lower() =>
+        Satisfy(System.Char.IsLower);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Upper() =>
+        Satisfy(System.Char.IsUpper);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Any() => Item();
+
 }
