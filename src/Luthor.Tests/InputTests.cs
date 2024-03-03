@@ -16,7 +16,7 @@ public sealed class InputTests
         Assert.Equal(value[1], input.PeekAhead(1));
         Assert.Equal(value[2], input.PeekAhead(2));
         Assert.Equal(value[3], input.PeekAhead(3));
-        Assert.Equal(value, input);
+        Assert.Equal(value, input.ToString());
     }
 
     [Fact]
@@ -27,6 +27,6 @@ public sealed class InputTests
         Assert.Equal(1, next.Offset);
         Assert.Equal(3, next.Length);
         Assert.Equal('2', next.Peek());
-        Assert.Equal("234", next);
+        Assert.Equal("234", next.ToString());
     }
 }
