@@ -10,7 +10,7 @@ public sealed class SequenceTests
     {
         var input = (Input)"1234";
         var parser = Parser.Zero<char>()
-            .Sequence(Parser.Item);
+            .Sequence(Parser.Item());
 
         var result = parser(input);
 
@@ -22,7 +22,7 @@ public sealed class SequenceTests
     {
         var input = (Input)"1234";
         var parser =
-            Parser.Item.Sequence(Parser.Item);
+            Parser.Item().Sequence(Parser.Item());
 
         var result = parser.Invoke(input);
 

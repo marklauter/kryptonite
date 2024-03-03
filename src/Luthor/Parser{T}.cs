@@ -1,3 +1,3 @@
 ﻿namespace Luthor;
 
-public delegate Result<T> Parser<T>(Input input);
+public delegate ParseResult<T> Parser<T>(Input input);

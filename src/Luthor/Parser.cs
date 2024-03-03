@@ -8,52 +8,49 @@ public static class Parser
     // result v = \inp-> [(v,inp)]
     // does not consume
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<V> ResultV<V>(V v) => input =>
-        Luthor.Result.WithValue(v, input);
+    public static Parser<TValue> Result<TValue>(TValue value) =>
+        input => ParseResult.Value(value, input);
 
     // zero :: Parser a
     // zero = \inp-> []
     // does not consume
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<T> Zero<T>() =>
-        Luthor.Result.Empty<T>;
+    public static Parser<T> Zero<T>() => ParseResult.Zero<T>;
 
     // item :: Parser Char
     // item = \inp-> case inp of
     //  []      -> []var
     //  (x:xs)  -> [(x, xs)]
     // always consumes one char unless end of input
-    public static Parser<char> Item = input =>
-    {
-        var eof = input.EndOfInput;
-        return eof
-            ? Luthor.Result.Empty<char>(input)
-            : Luthor.Result.New(input.Peek(), input, input.Advance(), !eof);
-    };
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Parser<char> Item() =>
+        input => input.EndOfInput
+            ? ParseResult.Zero<char>(input)
+            : ParseResult.Value(input.Peek(), input, input.Advance());
 
     // bind :: Parser a-> (a-> Parser b)-> Parser b
     // p bind f = \inp-> concat[f v inp | (v, inp) < -p inp]
     public static Parser<TRight> Bind<TLeft, TRight>(
-        this Parser<TLeft> parser,
-        Func<TLeft, Parser<TRight>> function)
+        this Parser<TLeft> leftParser,
+        Func<TLeft, Parser<TRight>> rightParser)
     {
-        ArgumentNullException.ThrowIfNull(parser);
-        ArgumentNullException.ThrowIfNull(function);
+        ArgumentNullException.ThrowIfNull(leftParser);
+        ArgumentNullException.ThrowIfNull(rightParser);
 
         return input =>
         {
-            var leftResult = parser(input);
+            var leftResult = leftParser(input);
             if (!leftResult.HasValue)
             {
                 return leftResult.CastEmpty<TLeft, TRight>();
             }
 
             var rightResult =
-                function(leftResult.Value)(leftResult.Remainder);
+                rightParser(leftResult.Value)(leftResult.Remainder);
 
             return !rightResult.HasValue
                 ? rightResult
-                : Result.WithValue(rightResult.Value, input, rightResult.Remainder);
+                : ParseResult.Value(rightResult.Value, input, rightResult.Remainder);
         };
     }
 
@@ -71,7 +68,7 @@ public static class Parser
             leftParser.Bind(leftResult =>
                 rightParser.Bind(rightResult =>
                     new Parser<(TLeft, TRight)>(input =>
-                        Result.WithValue<(TLeft, TRight)>((leftResult, rightResult), input))));
+                        ParseResult.Value<(TLeft, TRight)>((leftResult, rightResult), input))));
     }
 
     // sat :: (Char-> Bool) -> Parser Char
@@ -81,14 +78,9 @@ public static class Parser
     {
         ArgumentNullException.ThrowIfNull(predicate);
 
-        return input =>
-        {
-            var result = Item(input);
-            return !result.HasValue
-                ? result
-                : predicate(result.Value)
-                    ? Result.WithValue(result.Value, input, result.Remainder)
-                    : Result.Empty<char>(input);
-        };
+        return Item().Bind(ch =>
+            predicate(ch)
+                ? Result(ch)
+                : Zero<char>());
     }
 }

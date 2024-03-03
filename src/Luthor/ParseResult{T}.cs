@@ -1,6 +1,6 @@
 ﻿namespace Luthor;
 
-public readonly struct Result<T>(
+public readonly struct ParseResult<T>(
     T value,
     Input match,
     Input remainder,
@@ -14,7 +14,7 @@ public readonly struct Result<T>(
     public int Length => Remainder.Offset - Match.Offset;
     public int Offset => Match.Offset;
 
-    public static explicit operator string(Result<T> result) =>
+    public static explicit operator string(ParseResult<T> result) =>
         !result.HasValue
             ? String.Empty
             : result.Length > 0

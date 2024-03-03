@@ -10,7 +10,7 @@ public sealed class BindTests
     {
         var input = (Input)"1234";
         var parser = Parser.Zero<char>()
-            .Bind(ch => Parser.Item);
+            .Bind(ch => Parser.Item());
 
         var result = parser(input);
         Assert.False(result.HasValue);
@@ -20,13 +20,13 @@ public sealed class BindTests
     public void Item_Bind_Item_Consumes_Two()
     {
         var input = (Input)"1234";
-        var parser = Parser.Item
+        var parser = Parser.Item()
             .Bind<char, string>(ch => input =>
             {
-                var result = Parser.Item(input);
+                var result = Parser.Item()(input);
                 return result.HasValue
-                    ? Result.WithValue($"{ch}{result.Value}", input, result.Remainder)
-                    : Result.Empty<string>(input);
+                    ? ParseResult.Value($"{ch}{result.Value}", input, result.Remainder)
+                    : ParseResult.Zero<string>(input);
             });
         var result = parser(input);
         Assert.True(result.HasValue);
@@ -41,7 +41,7 @@ public sealed class BindTests
     public void Item_Bind_Zero_Returns_Zero()
     {
         var input = (Input)"1234";
-        var parser = Parser.Item
+        var parser = Parser.Item()
             .Bind(ch => Parser.Zero<string>());
         var result = parser(input);
         Assert.False(result.HasValue);

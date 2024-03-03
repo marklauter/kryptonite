@@ -11,7 +11,7 @@ public sealed class PrimitivesTests
     public void ResultV(string source)
     {
         var input = (Input)source;
-        var result = Parser.ResultV(1)(input);
+        var result = Parser.Result(1)(input);
         Assert.True(result.HasValue);
         Assert.Equal(1, result.Value);
         Assert.Equal(input, result.Match);
@@ -36,7 +36,7 @@ public sealed class PrimitivesTests
     public void Item(string source, bool hasValue)
     {
         var input = (Input)source;
-        var result = Parser.Item(input);
+        var result = Parser.Item()(input);
         Assert.Equal(hasValue, result.HasValue);
         Assert.Equal(input, result.Match);
         var remainder = hasValue
