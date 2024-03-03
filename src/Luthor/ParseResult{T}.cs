@@ -16,6 +16,8 @@ public readonly struct ParseResult<T>(
     public int Length => Remainder.Offset - Match.Offset;
     public int Offset => Match.Offset;
 
+    public ReadOnlySpan<char> AsSpan() => Match.AsSpan()[..Length];
+
     public override string ToString() => (string)this;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -23,6 +25,6 @@ public readonly struct ParseResult<T>(
         !result.HasValue
             ? String.Empty
             : result.Length > 0
-                ? new string(result.Match.Source[result.Match.Offset..result.Remainder.Offset])
+                ? result.AsSpan().ToString()
                 : result.Value?.ToString() ?? String.Empty;
 }

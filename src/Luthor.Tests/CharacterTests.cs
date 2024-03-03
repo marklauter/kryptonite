@@ -97,4 +97,37 @@ public sealed class CharacterTests
             Assert.Equal(source[1..], result.Remainder.ToString());
         }
     }
+
+    [Fact]
+    public void Bind_Char_String()
+    {
+        var input = (Input)"abcd";
+        var parser = Character.Lower().Bind<char, string>(ch =>
+        input =>
+        {
+            var result = Character.Lower()(input);
+            return result.HasValue
+                ? ParseResult.Value($"{ch}{result.Value}", input, result.Remainder)
+                : ParseResult.Zero<string>(input);
+        });
+        var result = parser.Invoke(input);
+        Assert.True(result.HasValue);
+        Assert.Equal(2, result.Length);
+        Assert.Equal(0, result.Offset);
+        Assert.Equal("ab", result.Value);
+    }
+
+    [Fact]
+    public void Bind_Char_Char()
+    {
+        var input = (Input)"abcd";
+        var parser = Character.Lower().Bind(ch => Character.Lower());
+
+        var result = parser.Invoke(input);
+        Assert.True(result.HasValue);
+        Assert.Equal(2, result.Length);
+        Assert.Equal(0, result.Offset);
+        Assert.Equal('b', result.Value);
+        Assert.Equal("ab", result.ToString());
+    }
 }
