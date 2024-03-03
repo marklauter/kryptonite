@@ -13,16 +13,8 @@ public readonly struct ParseResult<T>(
     public readonly Input Remainder = remainder;
     public readonly bool HasValue = hasValue;
 
-    public int Length
-    {
-        get
-        {
-            var len = Remainder.Offset - Match.Offset;
-            return len > -1 ? len : 0;
-        }
-    }
-
-    public int Offset => Match.Offset > -1 ? Match.Offset : 0;
+    public int Length => Remainder.Offset - Match.Offset;
+    public int Offset => Match.Offset;
 
     public override string ToString() => (string)this;
 
