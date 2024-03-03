@@ -1,5 +1,4 @@
-﻿using Luthor.Classifiers;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Luthor.Tests;
 
@@ -12,7 +11,7 @@ public sealed class PrimitivesTests
     public void ResultV(string source)
     {
         var input = (Input)source;
-        var result = Primitives.Result(1)(input);
+        var result = Parser.ResultV(1)(input);
         Assert.True(result.HasValue);
         Assert.Equal(1, result.Value);
         Assert.Equal(input, result.Match);
@@ -25,7 +24,7 @@ public sealed class PrimitivesTests
     public void ZeroT(string source)
     {
         var input = (Input)source;
-        var result = Primitives.Zero<char>()(input);
+        var result = Parser.Zero<char>()(input);
         Assert.False(result.HasValue);
         Assert.Equal(input, result.Match);
         Assert.Equal(input, result.Remainder);
@@ -34,15 +33,15 @@ public sealed class PrimitivesTests
     [Theory]
     [InlineData("xyz", true)]
     [InlineData("", false)]
-    public void Item(string source, bool expectedHasValue)
+    public void Item(string source, bool hasValue)
     {
         var input = (Input)source;
-        var result = Primitives.Item(input);
-        Assert.Equal(expectedHasValue, result.HasValue);
+        var result = Parser.Item(input);
+        Assert.Equal(hasValue, result.HasValue);
         Assert.Equal(input, result.Match);
-        var expectedRemainder = expectedHasValue
+        var remainder = hasValue
             ? input.Advance()
             : input;
-        Assert.Equal(expectedRemainder, result.Remainder);
+        Assert.Equal(remainder, result.Remainder);
     }
 }

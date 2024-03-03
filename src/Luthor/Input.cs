@@ -127,5 +127,6 @@ public readonly struct Input
 
     public override int GetHashCode() => HashCode.Combine(this, Value, Offset);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(Input other) => this == other;
 }

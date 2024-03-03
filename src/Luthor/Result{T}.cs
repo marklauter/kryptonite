@@ -12,6 +12,7 @@ public readonly struct Result<T>(
     public readonly bool HasValue = hasValue;
 
     public int Length => Remainder.Offset - Match.Offset;
+    public int Offset => Match.Offset;
 
     public static explicit operator string(Result<T> result) =>
         !result.HasValue
