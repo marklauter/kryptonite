@@ -84,24 +84,4 @@ public static class Parser
                 ? Result(ch)
                 : Zero<char>());
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<char> Char(char expectedChar) =>
-        Satisfy(actualChar => actualChar == expectedChar);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<char> Digit() =>
-        Satisfy(System.Char.IsDigit);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<char> Lower() =>
-        Satisfy(System.Char.IsLower);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<char> Upper() =>
-        Satisfy(System.Char.IsUpper);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Parser<char> Any() => Item();
-
 }

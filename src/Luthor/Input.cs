@@ -11,11 +11,11 @@ namespace Luthor;
 public readonly struct Input
     : IEquatable<Input>
 {
-    public readonly char[] Value;
+    public readonly char[] Source;
     public readonly int Offset;
 
-    public int Length => Value.Length - Offset;
-    public bool EndOfInput => Offset >= Value.Length;
+    public int Length => Source.Length - Offset;
+    public bool EndOfInput => Offset >= Source.Length;
 
     public static readonly Input Empty = new([], 0);
 
@@ -27,7 +27,7 @@ public readonly struct Input
             throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        Value = value;
+        Source = value;
         Offset = offset;
     }
 
@@ -41,10 +41,10 @@ public readonly struct Input
     public Input Advance() => Advance(1);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Input Advance(int length) => new(Value, Offset + length);
+    public Input Advance(int length) => new(Source, Offset + length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char Peek() => EndOfInput ? Char.MinValue : Value[Offset];
+    public char Peek() => EndOfInput ? Char.MinValue : Source[Offset];
 
     public bool TryPeek(out char value)
     {
@@ -54,28 +54,28 @@ public readonly struct Input
             return false;
         }
 
-        value = Value[Offset];
+        value = Source[Offset];
         return true;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public char PeekAhead(int offset) => Offset + offset >= Value.Length || offset < 0
+    public char PeekAhead(int offset) => Offset + offset >= Source.Length || offset < 0
         ? throw new ArgumentOutOfRangeException(nameof(offset))
         : EndOfInput
             ? Char.MinValue
-            : Value[Offset + offset];
+            : Source[Offset + offset];
 
     public bool TryPeekAhead(int offset, out char value)
     {
         value = Char.MinValue;
-        if (offset < 0 || Offset + offset >= Value.Length)
+        if (offset < 0 || Offset + offset >= Source.Length)
         {
             return false;
         }
 
         if (!EndOfInput)
         {
-            value = Value[Offset + offset];
+            value = Source[Offset + offset];
         }
 
         return true;
@@ -86,7 +86,7 @@ public readonly struct Input
         ? throw new ArgumentOutOfRangeException(nameof(offsetFromEnd))
         : EndOfInput
             ? Char.MinValue
-            : Value[Offset - offsetFromEnd];
+            : Source[Offset - offsetFromEnd];
 
     public bool TryPeekBehind(int offsetFromEnd, out char value)
     {
@@ -98,7 +98,7 @@ public readonly struct Input
 
         if (!EndOfInput)
         {
-            value = Value[Offset - offsetFromEnd];
+            value = Source[Offset - offsetFromEnd];
         }
 
         return true;
@@ -108,24 +108,24 @@ public readonly struct Input
     public static implicit operator Input(string value) => new([.. value]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<char> AsSpan() => Value.AsSpan()[Offset..];
+    public ReadOnlySpan<char> AsSpan() => Source.AsSpan()[Offset..];
 
     public override bool Equals([NotNullWhen(true)] object? obj) =>
         obj is not null &&
         obj is Input input &&
         input == this;
 
-    public override string ToString() => new(Value[Offset..]);
+    public override string ToString() => new(Source[Offset..]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Input left, Input right) =>
         left.Offset == right.Offset &&
-        ReferenceEquals(left.Value, right.Value);
+        ReferenceEquals(left.Source, right.Source);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Input left, Input right) => !(left == right);
 
-    public override int GetHashCode() => HashCode.Combine(this, Value, Offset);
+    public override int GetHashCode() => HashCode.Combine(this, Source, Offset);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(Input other) => this == other;
