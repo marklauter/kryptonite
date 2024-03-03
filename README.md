@@ -1,6 +1,6 @@
 # kryptonite
 
-![kryptonite logo](https://github.com/marklauter/kryptonite/blob/mpc/lex-luthor-small.png)
+![kryptonite logo](https://github.com/marklauter/kryptonite/blob/main/lex-luthor-small.png)
 
 Kryptonite is a C# monadic combinatory parser based on the ideas expressed in Superpower and Sprache. I'm trying to implement the ideas straight out of Hutton's & Meijer's paper, but the occational peek at Superpower helps to clarify the ideas expressed in the paper. I was originally introduced to the MPC idea through one of the Nicholas Blumhart's presentations shared in the refrences section.
 
