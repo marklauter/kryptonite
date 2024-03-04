@@ -18,7 +18,7 @@ public readonly struct ParseResult<T>(
 
     public ReadOnlySpan<char> AsSpan() => Match.AsSpan()[..Length];
 
-    public override string ToString() => (string)this;
+    public override string ToString() => AsSpan().ToString();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static explicit operator string(ParseResult<T> result) =>
