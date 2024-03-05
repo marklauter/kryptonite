@@ -32,10 +32,10 @@ public static class Parser
     // p bind f = \inp-> concat[f v inp | (v, inp) < -p inp]
     public static Parser<TRight> Bind<TLeft, TRight>(
         this Parser<TLeft> leftParser,
-        Func<TLeft, Parser<TRight>> rightParser)
+        Func<TLeft, Parser<TRight>> binding)
     {
         ArgumentNullException.ThrowIfNull(leftParser);
-        ArgumentNullException.ThrowIfNull(rightParser);
+        ArgumentNullException.ThrowIfNull(binding);
 
         return input =>
         {
@@ -46,7 +46,7 @@ public static class Parser
             }
 
             var rightResult =
-                rightParser(leftResult.Value)(leftResult.Remainder);
+                binding(leftResult.Value)(leftResult.Remainder);
 
             return !rightResult.HasValue
                 ? rightResult
