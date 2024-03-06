@@ -30,7 +30,7 @@ public sealed class ResultTests
     public void WithValueAndRemainder()
     {
         var input = (Input)"1234";
-        var remainder = input.Advance();
+        var remainder = ++input;
         var result = ParseResult.Value(1, input, remainder);
         Assert.True(result.HasValue);
         Assert.Equal(1, result.Value);

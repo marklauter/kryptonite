@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Luthor;
@@ -11,37 +12,49 @@ namespace Luthor;
 public readonly struct Input
     : IEquatable<Input>
 {
-    public readonly char[] Source;
+    public readonly ImmutableArray<char> Source;
     public readonly int Offset;
 
     public int Length => Source.Length - Offset;
     public bool EndOfInput => Offset >= Source.Length;
 
-    public static readonly Input Empty = new([], 0);
+    public static readonly Input Empty = new();
 
-    public Input(char[] value, int offset)
+    public Input(ImmutableArray<char> source, int offset)
     {
-        ArgumentNullException.ThrowIfNull(value);
-        if (offset < 0 || offset > value.Length)
+        ArgumentNullException.ThrowIfNull(source);
+        if (offset < 0 || offset > source.Length)
         {
             throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        Source = value;
+        Source = source;
         Offset = offset;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Input() : this([], 0) { }
+    public Input(Input original)
+        : this(original.Source, original.Offset) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private Input(char[] value) : this(value, 0) { }
+    public Input()
+        : this([], 0) { }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Input(ImmutableArray<char> source)
+        : this(source, 0) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Input Advance() => Advance(1);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Input Advance(int length) => new(Source, Offset + length);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Input Backtrack() => Backtrack(1);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Input Backtrack(int length) => new(Source, Offset - length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public char Peek() => EndOfInput ? Char.MinValue : Source[Offset];
@@ -105,25 +118,38 @@ public readonly struct Input
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static implicit operator Input(string value) => new([.. value]);
+    public static implicit operator Input(string source) =>
+        new([.. source]);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<char> AsSpan() => Source.AsSpan()[Offset..];
+    public ReadOnlySpan<char> AsSpan() => Source.AsSpan(Offset..);
 
     public override bool Equals([NotNullWhen(true)] object? obj) =>
         obj is not null &&
         obj is Input input &&
         input == this;
 
-    public override string ToString() => new(Source[Offset..]);
+    public override string ToString() => new(Source.AsSpan(Offset..));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Input left, Input right) =>
         left.Offset == right.Offset &&
-        ReferenceEquals(left.Source, right.Source);
+        left.Source == right.Source;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(Input left, Input right) => !(left == right);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Input operator +(Input input, int length) => input.Advance(length);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Input operator -(Input input, int length) => input.Backtrack(length);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Input operator ++(Input input) => input.Advance();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Input operator --(Input input) => input.Backtrack();
 
     public override int GetHashCode() => HashCode.Combine(this, Source, Offset);
 

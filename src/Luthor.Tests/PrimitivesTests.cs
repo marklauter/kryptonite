@@ -40,7 +40,7 @@ public sealed class PrimitivesTests
         Assert.Equal(hasValue, result.HasValue);
         Assert.Equal(input, result.Match);
         var remainder = hasValue
-            ? input.Advance()
+            ? ++input
             : input;
         Assert.Equal(remainder, result.Remainder);
     }

@@ -23,7 +23,7 @@ public sealed class InputTests
     public void Advance()
     {
         var start = (Input)"1234";
-        var next = start.Advance();
+        var next = ++start;
         Assert.Equal(1, next.Offset);
         Assert.Equal(3, next.Length);
         Assert.Equal('2', next.Peek());

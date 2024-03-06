@@ -26,7 +26,7 @@ public static class Parser
     public static Parser<char> Item() =>
         input => input.EndOfInput
             ? ParseResult.Zero<char>(input)
-            : ParseResult.Value(input.Peek(), input, input.Advance());
+            : ParseResult.Value(input.Peek(), input, ++input);
 
     // bind :: Parser a-> (a-> Parser b)-> Parser b
     // p bind f = \inp-> concat[f v inp | (v, inp) < -p inp]
