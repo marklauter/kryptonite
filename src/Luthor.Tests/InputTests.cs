@@ -10,7 +10,7 @@ public sealed class InputTests
     {
         var value = "1234";
         var input = (Input)value;
-        Assert.Equal(0, input.Offset);
+        Assert.Equal(0, input.Position);
         Assert.Equal(4, input.Length);
         Assert.Equal(value[0], input.Peek());
         Assert.Equal(value[1], input.PeekAhead(1));
@@ -24,7 +24,7 @@ public sealed class InputTests
     {
         var start = (Input)"1234";
         var next = ++start;
-        Assert.Equal(1, next.Offset);
+        Assert.Equal(1, next.Position);
         Assert.Equal(3, next.Length);
         Assert.Equal('2', next.Peek());
         Assert.Equal("234", next.ToString());

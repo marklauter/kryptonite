@@ -17,11 +17,7 @@ public sealed class SatisfyTests
     [Fact]
     public void Satisfy_Returns_Zero_When_EOF()
     {
-        var input = ((Input)"1234")
-            .Advance()
-            .Advance()
-            .Advance()
-            .Advance();
+        var input = (Input)"1234" + 4;
 
         var result = Parser.Satisfy(ch => ch == '1')(input);
         Assert.False(result.HasValue);

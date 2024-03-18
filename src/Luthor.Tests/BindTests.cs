@@ -34,7 +34,7 @@ public sealed class BindTests
         Assert.Equal(2, result.Length);
         Assert.Equal(0, result.Offset);
         Assert.Equal(2, result.Remainder.Length);
-        Assert.Equal(2, result.Remainder.Offset);
+        Assert.Equal(2, result.Remainder.Position);
     }
 
     [Fact]
@@ -47,6 +47,6 @@ public sealed class BindTests
         Assert.False(result.HasValue);
         // item consumes, event if bind returns zero
         Assert.Equal(3, result.Remainder.Length);
-        Assert.Equal(1, result.Remainder.Offset);
+        Assert.Equal(1, result.Remainder.Position);
     }
 }

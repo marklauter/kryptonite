@@ -32,6 +32,6 @@ public sealed class SequenceTests
         Assert.Equal(2, result.Length);
         Assert.Equal(0, result.Offset);
         Assert.Equal(2, result.Remainder.Length);
-        Assert.Equal(2, result.Remainder.Offset);
+        Assert.Equal(2, result.Remainder.Position);
     }
 }

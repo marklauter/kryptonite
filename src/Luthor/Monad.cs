@@ -1,39 +1,56 @@
 ﻿namespace Luthor;
 
-public delegate Out<TValue, TInp> M<TInp, TValue>(TInp inp);
+public delegate Out<TValue, TInp> Mondad<TValue, TInp>(TInp inp);
 
 public static class Monad
 {
-    public static M<TInp, TValue> Result<TInp, TValue>(TValue value) =>
-        inp => new(value, inp);
+    public static Mondad<TValue, TInp> Zero<TValue, TInp>() => Out.Zero<TValue, TInp>;
 
-    public static M<TInp, RValue> Bind<TInp, LValue, RValue>(
-        this M<TInp, LValue> mLeft,
-        Func<LValue, M<TInp, RValue>> continuation)
+    public static Mondad<TValue, TInp> Result<TValue, TInp>(TValue value) =>
+        input => new(value, true, input, input);
+
+    public static Mondad<RValue, TInp> Bind<TInp, LValue, RValue>(
+        this Mondad<LValue, TInp> mLeft,
+        Func<LValue, Mondad<RValue, TInp>> continuation)
     {
         ArgumentNullException.ThrowIfNull(mLeft);
         ArgumentNullException.ThrowIfNull(continuation);
 
-        return inp =>
+        return input =>
         {
-            var oLeft = mLeft(inp);
-            if (oLeft.Value is null)
+            var oLeft = mLeft(input);
+            if (!oLeft.HasValue)
             {
-                return new(default, inp);
+                return Out.Zero<RValue, TInp>(input);
             }
 
-            var oRight =
-                continuation(oLeft.Value)(oLeft.Remainder);
+            var mRight = continuation(oLeft.Value);
+            var oRight = mRight(oLeft.Remainder);
 
-            return oRight.Value is not null
+            return oRight.HasValue
                 ? oRight
-                : new(default, inp);
+                : Out.Zero<RValue, TInp>(input);
         };
     }
+
+    public static Mondad<TValue, TInp>[] Plus<TValue, TInp>(this Mondad<TValue, TInp> left, Mondad<TValue, TInp> right)
+        => [left, right];
 }
 
-public struct Out<TValue, TInp>(TValue? value, TInp remainder)
+public static class Out
 {
-    public TValue? Value = value;
-    public TInp Remainder = remainder;
+    public static Out<TValue, TInp> Zero<TValue, TInp>(TInp input) => new(default!, false, input, input);
+    public static Out<TValue, TInp> Value<TValue, TInp>(TValue value, TInp input) => new(value, true, input, input);
+}
+
+public readonly struct Out<TValue, TInp>(
+    TValue value,
+    bool hasValue,
+    TInp input,
+    TInp remainder)
+{
+    public readonly TValue Value = value;
+    public readonly bool HasValue = hasValue;
+    public readonly TInp Input = input;
+    public readonly TInp Remainder = remainder;
 }

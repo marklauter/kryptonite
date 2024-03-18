@@ -13,8 +13,8 @@ public readonly struct ParseResult<T>(
     public readonly Input Remainder = remainder;
     public readonly bool HasValue = hasValue;
 
-    public int Length => Remainder.Offset - Match.Offset;
-    public int Offset => Match.Offset;
+    public int Length => Remainder.Position - Match.Position;
+    public int Offset => Match.Position;
 
     public ReadOnlySpan<char> AsSpan() => Match.AsSpan()[..Length];
 

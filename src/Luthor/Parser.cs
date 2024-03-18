@@ -88,7 +88,15 @@ public static class Parser
     // plus :: Parser a-> Parser a-> Parser a
     // p plus q = \inp-> (p inp ++ q inp)
     // monparsing.pdf describes this as a choice operator - seems like an Or operator
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    //public static Parser<T>[] Plus<T>(this Parser<T> leftParser, Parser<T> rightParser)
+    //{
+    //    ArgumentNullException.ThrowIfNull(leftParser);
+    //    ArgumentNullException.ThrowIfNull(rightParser);
+
+    //    return [leftParser, rightParser];
+    //}
+
     public static Parser<T> Plus<T>(this Parser<T> leftParser, Parser<T> rightParser)
     {
         ArgumentNullException.ThrowIfNull(leftParser);
