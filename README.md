@@ -9,3 +9,4 @@ Kryptonite is a C# monadic combinatory parser based on the ideas expressed in Su
 - Nicholas Blumhardt's Superpower: https://github.com/datalust/superpower
 - Nicholas Blumhardt's NDC Conference Superpower demo: https://www.youtube.com/watch?v=klHyc9HQnNQ
 - My own recursive descent by-hand project: https://github.com/marklauter/interpreter-redux
+- 
