@@ -1,5 +1,5 @@
 <div>
-<img src="https://github.com/marklauter/kryptonite/blob/main/kryptonite.svg" title="kryptonite-logo" alt="kryptonite-logo" height="128" />
+<img src="https://github.com/marklauter/kryptonite/blob/main/images/kryptonite.svg" title="kryptonite-logo" alt="kryptonite-logo" height="128" />
 
 # kryptonite
 Kryptonite is a C# monadic combinatory parser based on the ideas expressed in Superpower and Sprache. I'm trying to implement the ideas straight out of Hutton's & Meijer's paper, but the occasional peek at Superpower helps to clarify the ideas expressed in the paper. I was originally introduced to the MPC idea through one of Nicholas Blumhart's presentations shared in the references section.
