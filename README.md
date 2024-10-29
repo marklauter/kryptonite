@@ -1,7 +1,7 @@
 ![Kryptonite Logo](https://raw.githubusercontent.com/marklauter/kryptonite/main/images/kryptonite.png "Kryptonite Logo")
 
 # Kryptonite
-Kryptonite is a dotnet monadic combinatory parser based on the ideas expressed in Superpower and Sprache. 
+Kryptonite is a parser combinator for dotnet based on the ideas expressed in Superpower and Sprache. 
 I'm trying to implement the ideas straight out of Hutton's & Meijer's paper, 
 but the occasional peek at Superpower helps to clarify the ideas expressed in the paper. 
 I was originally introduced to the MPC idea through one of Nicholas Blumhart's presentations shared in the references section.
